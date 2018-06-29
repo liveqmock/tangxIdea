@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.topaiebiz.member.point.dao.MemberAssetDao">
+
+    <!-- 查询会员总积分
+    <select id="selectMemberPointSum" resultType="com.topaiebiz.member.point.dto.PointLogDto"
+            parameterType="Long">
+		SELECT SUM(gainScore) gainScore FROM t_mem_member_point_log WHERE memberId = #{memberId};
+	</select>
+	-->
+    <update id="updateOnlyAsset">
+		update t_mem_member_asset
+		SET balance = balance + #{balanceChange,jdbcType=DECIMAL},
+			point = point + #{pointChange,jdbcType=INTEGER},
+			lastModifiedTime= #{nowTime,jdbcType=TIMESTAMP}
+		WHERE
+			balance + #{balanceChange,jdbcType=DECIMAL} <![CDATA[ >= ]]> 0 AND
+		 	point + #{pointChange,jdbcType=INTEGER} <![CDATA[ >= ]]> 0 AND
+		 	memberId = #{memberId,jdbcType=INTEGER}
+
+	</update>
+
+
+</mapper>

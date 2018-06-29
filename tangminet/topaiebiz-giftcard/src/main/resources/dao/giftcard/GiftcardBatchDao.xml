@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.topaiebiz.giftcard.dao.GiftcardBatchDao">
+
+    <select id="queryGiftcardIssue" resultType="com.topaiebiz.giftcard.entity.GiftcardBatch">
+        SELECT
+        gi.id AS id,
+        gi.id AS batchNo,
+        gi.cardName AS cardName,
+        gl.labelName AS labelName,
+        gi.faceValue AS faceValue,
+        gi.salePrice AS salePrice,
+        gi.issueNum AS issueNum,
+        gi.createdTime AS createdTime,
+        gi.validDays AS validDays,
+        gi.priority AS priority,
+        gi.cover AS cover,
+        gi.medium AS medium,
+        gi.limitNum AS limitNum,
+        gi.cardAttr AS cardAttr,
+        gi.issueStatus AS issueStatus
+        FROM t_giftcard_batch gi LEFT  JOIN t_giftcard_label gl on gi.labelId= gl.id
+        WHERE gi.delFlag=0
+        <if test="batchNo != null">
+            AND gi.id = #{batchNo}
+        </if>
+        <if test="cardName != null">
+            AND gi.cardName LIKE  concat("%",#{cardName},"%")
+        </if>
+        <if test="medium != null">
+            AND gi.medium = #{medium}
+        </if>
+        <if test="labelId != null">
+            AND gi.labelId = #{labelId}
+        </if>
+        <if test="priority != null">
+            AND gi.priority = #{priority}
+        </if>
+        <if test="issueStatus != null">
+            AND gi.issueStatus = #{issueStatus}
+        </if>
+        <if test="startTime != null">
+            AND gi.createdTime &gt;= #{startTime}
+        </if>
+        <if  test=" endTime != null">
+            AND gi.createdTime &lt;= #{endTime}
+        </if>
+        <if test="cardAttr != null">
+            AND gi.cardAttr =#{cardAttr}
+        </if>
+        ORDER BY gi.createdTime DESC
+    </select>
+    <select id="queryGiftcardShow" resultType="com.topaiebiz.giftcard.entity.GiftcardBatch">
+        SELECT id ,cardName,cover,faceValue,salePrice,validDays,applyScope
+        FROM t_giftcard_batch
+        WHERE delFlag=0 AND issueStatus=3 and medium=4
+        <if test="labelId != null">
+            AND labelId=#{labelId}
+        </if>
+        <if test="cardAttr != null">
+            AND cardAttr=#{cardAttr}
+        </if>
+        ORDER by createdTime DESC
+    </select>
+    <select id="queryGiftcardGroupByParam" resultType="com.topaiebiz.giftcard.entity.GiftcardBatch">
+        SELECT id,faceValue,salePrice
+        from t_giftcard_batch
+        where delFlag=0 and medium=4 and issueStatus=3
+        <if test="labelId != null">
+            AND labelId = #{labelId}
+        </if>
+        <if test="cardAttr != null">
+            AND cardAttr = #{cardAttr}
+        </if>
+        GROUP BY faceValue,salePrice ORDER BY faceValue ASC ,salePrice ASC
+    </select>
+    <select id="getCardNoSpan" resultType="com.topaiebiz.giftcard.entity.GiftcardBatch">
+        SELECT id,noStart,noEnd FROM t_giftcard_batch WHERE prefix = #{prefix} ORDER BY noEnd DESC LIMIT 1
+    </select>
+</mapper>

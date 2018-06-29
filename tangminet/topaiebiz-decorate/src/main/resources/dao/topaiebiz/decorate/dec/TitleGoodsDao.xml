@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.topaiebiz.dec.dao.TitleGoodsDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, titleId, goodsId, sortNo, memo, creatorId, createdTime, lastModifierId, lastModifiedTime, deletedFlag, version
+    </sql>
+
+	<!-- 逻辑删除单条区域数据  -->
+	<!--<delete id="deleteTitleGoods">
+		UPDATE t_dec_title_goods SET deletedFlag = 1
+		WHERE id =
+		#{titleGoodsId}
+	</delete>-->
+<!--<update id="updateDeleteFlag" parameterType="java.util.Map">
+		UPDATE t_dec_title_goods SET
+		 deletedFlag = #{deletedFlag},lastModifierId=#{lastModifierId},
+		 lastModifiedTime=#{lastModifiedTime}
+		 WHERE
+		 titleId = #{titleId} AND goodsId=#{goodsId}
+	</update>-->
+</mapper>

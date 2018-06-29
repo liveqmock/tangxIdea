@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.topaiebiz.promotion.mgmt.dao.CardActivityItemDao">
+    <!-- 减库存 -->
+    <update id="reduceStock">
+        UPDATE t_pro_promotion_card_item SET totalStorageRest = totalStorageRest - #{number},dayStorageRest =
+        dayStorageRest - #{number} WHERE id = #{id} AND dayStorageRest >= #{number} AND deletedFlag = 0
+    </update>
+    <!-- 库存回退 -->
+    <update id="backStock">
+        UPDATE t_pro_promotion_card_item SET totalStorageRest = totalStorageRest + #{number},dayStorageRest =
+        dayStorageRest + #{number} WHERE id = #{id} and totalStorage >= totalStorageRest + #{number}
+    </update>
+    <!-- 库存回退 -->
+    <update id="batchUpdateRestStorage">
+        UPDATE t_pro_promotion_card_item SET dayStorageRest = dayStorage
+        WHERE deletedFlag = 0
+        AND activityId IN
+        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        AND totalStorageRest > 0
+    </update>
+</mapper>

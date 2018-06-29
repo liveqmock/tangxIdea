@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.topaiebiz.trade.refund.dao.RefundOrderDao">
+
+	<!-- 获取用户的售后订单 -->
+	<select id="getCustomerRefundOrderPage" resultType="com.topaiebiz.trade.refund.dto.page.CustomerRefundPageDTO">
+	SELECT
+		ttro.id AS refundOrderId,
+		ttro.refundTime AS refundTime,
+		ttro.refundType AS refundType,
+		ttro.refundState AS refundState,
+		ttro.refundGoodsNum AS refundGoodsNum,
+		ttro.refundPrice AS refundTotalPrice,
+		ttro.refundFreight AS refundFreight
+	FROM
+	  t_tsa_refund_order AS ttro
+	WHERE ttro.deletedFlag = 0
+	AND ttro.memberId = #{memberId}
+		ORDER BY ttro.createdTime DESC
+	</select>
+
+    <!-- 获取平台的售后订单 -->
+    <select id="getPlatformRefundOrderPage" resultType="com.topaiebiz.trade.refund.dto.page.RefundOrderPageDTO">
+        SELECT
+        ttro.id AS refundOrderId,
+        ttro.orderId AS orderId,
+        ttro.merchantName AS merchantName,
+        ttro.storeName AS storeName,
+        ttro.memberName AS memberName,
+        ttro.refundCardPrice AS refundCardPrice,
+        ttro.refundIntegralPrice AS refundIntegralPrice,
+        ttro.refundPrice AS refundPrice,
+        ttro.refundTime AS refundTime,
+        ttro.refundState AS refundState,
+        ttro.auditTime AS auditTime
+        FROM
+        t_tsa_refund_order AS ttro
+        WHERE ttro.deletedFlag = 0
+        AND ttro.pfInvolved = #{pfInvolved}
+        <if test="null != refundType">
+            AND ttro.refundType = #{refundType}
+        </if>
+        <if test="null != orderId">
+            AND ttro.orderId = #{orderId}
+        </if>
+        <if test="null != storeId">
+            AND ttro.storeId = #{storeId}
+        </if>
+        <if test="null != processState">
+            AND ttro.processState = #{processState}
+        </if>
+        ORDER BY ttro.refundTime DESC
+    </select>
+
+    <!-- 获取商家的售后订单 -->
+    <select id="getStoreRefundOrderPage" resultType="com.topaiebiz.trade.refund.dto.page.RefundOrderPageDTO">
+        SELECT
+        ttro.id AS refundOrderId,
+        ttro.orderId AS orderId,
+        ttro.memberName AS memberName,
+        ttro.refundPrice AS refundPrice,
+        ttro.refundTime AS refundTime,
+        ttro.refundState AS refundState,
+        ttro.auditTime AS auditTime
+        FROM
+        t_tsa_refund_order AS ttro
+        WHERE ttro.deletedFlag = 0
+        AND ttro.storeId = #{storeId}
+        <if test="null != orderId">
+            AND ttro.orderId = #{orderId}
+        </if>
+        <if test="null != refundType">
+            AND ttro.refundType = #{refundType}
+        </if>
+        <if test="null != refundTime">
+            AND to_days(ttro.refundTime) = to_days(#{refundTime})
+        </if>
+        <if test="null != memberName and memberName != ''">
+            AND locate(#{memberName}, ttro.memberName) > 0
+        </if>
+        <if test="null != refundPrice">
+            AND ttro.refundPrice = #{refundPrice}
+        </if>
+        <if test="null != processState">
+            AND ttro.processState = #{processState}
+        </if>
+        ORDER BY ttro.refundTime DESC
+    </select>
+
+
+    <!--根据订单ID集合 查询总退款金额 -->
+    <select id="getRefundPriceByOrderId" resultType="com.topaiebiz.trade.order.dto.store.export.OrderRefundPriceDTO">
+        SELECT ttro.orderId AS orderId, SUM(ttro.refundPrice) AS refundPrice
+        FROM t_tsa_refund_order AS ttro WHERE 1 = 1
+        <if test="orderIds != null">
+            AND ttro.orderId in
+            <foreach item="item" index="index" collection="orderIds" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        AND ttro.refundState = #{refundState} GROUP BY ttro.orderId
+    </select>
+
+</mapper>

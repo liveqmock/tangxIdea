@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.topaiebiz.goods.dao.CategoryBrandEditDao">
+
+    <!--操作库列表-->
+    <select id="selectCategortBrand" resultType="com.topaiebiz.goods.dto.CategoryBrandEditDTO">
+        select c.id,b.name,b.englishName,b.brandInitials,b.brandImage,c.syncStatus,c.sortNo,c.deletedFlag
+        from t_goo_category_brand_edit c
+        JOIN t_goo_brand b
+        ON c.brandId = b.id
+        where c.categoryId = #{categoryId} AND c.id NOT IN (
+        SELECT id FROM t_goo_category_brand_edit WHERE deletedFlag=1)
+        ORDER BY c.sortNo
+    </select>
+    <!--正式库列表分页-->
+    <select id="selectCategortBrands" resultType="com.topaiebiz.goods.dto.CategoryBrandDTO">
+        select c.id,b.name,b.englishName,b.brandInitials,b.brandImage,c.syncStatus,c.sortNo,c.deletedFlag
+        from t_goo_category_brand_edit c
+        JOIN t_goo_brand b
+        ON c.brandId = b.id
+        where c.categoryId = #{categoryId} AND c.deletedFlag = 0 AND b.deletedFlag = 0 ORDER BY c.sortNo
+    </select>
+    <!--查询彻底删除的品牌-->
+    <select id="selectCategortBrandEdit" resultType="com.topaiebiz.goods.entity.CategoryBrandEdit">
+        SELECT id,brandId,categoryId,syncStatus,deletedFlag FROM t_goo_category_brand_edit
+        WHERE brandId = #{brandId} AND categoryId = #{categoryId}
+        AND id NOT IN(SELECT id FROM t_goo_category_brand_edit WHERE deletedFlag =1 )
+    </select>
+
+</mapper>

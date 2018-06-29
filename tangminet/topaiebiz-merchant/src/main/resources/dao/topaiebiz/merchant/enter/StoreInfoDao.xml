@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.topaiebiz.merchant.enter.dao.StoreInfoDao">
+
+    <!-- 创建店铺后显示店铺的信息 -->
+    <select id="selectStoreInfoById" resultType="com.topaiebiz.merchant.enter.dto.StoreInfoDto">
+		SELECT
+		id,name,districtId,storeAddress,contactName,contactTele,
+		storeTele,description,images
+		FROM
+		t_mer_store_info WHERE id = #{id}
+	</select>
+
+    <!-- 根据loginName回显商家的提交信息 (在线经营范围) -->
+    <select id="selectMerchantTypeByLoginName" resultType="com.topaiebiz.merchant.enter.dto.StoreInfoDto">
+		SELECT
+		a.storeName,a.id AS merchantId,
+		a.`merchantType` ,a.imgages,a.settleCycle FROM t_mer_merchant_info a
+		 WHERE
+		a.id= #{id}
+	</select>
+
+    <select id="selectByMerchantId" resultType="com.topaiebiz.merchant.info.entity.StoreInfoEntity">
+		SELECT * from t_mer_store_info where merchantId=#{merchantId} AND deletedFlag=0 ORDER BY createdTime 
+	</select>
+
+    <!---店铺信息列表分页-->
+    <select id="selectStoreInfoList" resultType="com.topaiebiz.merchant.enter.dto.StoreInfoDto">
+        SELECT a.id,b.name AS merchantName,a.merchantId,a.name,a.merchantGradeId,a.contactTele,
+        g.`name`AS merchantGradeName FROM t_mer_store_info a
+        LEFT JOIN t_mer_merchant_info b ON b.id=a.merchantId
+        LEFT JOIN t_mer_merchant_grade g ON g.id=a.merchantGradeId WHERE a.deletedFlag=0
+
+        <if test="!(merchantName==null or merchantName == '')">
+            AND b.name like CONCAT('%', #{merchantName}, '%')
+        </if>
+        <if test="!(name==null or name == '')">
+            AND a.name like CONCAT('%', #{name}, '%')
+        </if>
+
+    </select>
+
+    <select id="selectStoreInfosList" resultType="com.topaiebiz.merchant.enter.dto.StoreInfoDto">
+        SELECT a.id AS storeId,a.name AS storeName,b.name,b.createdTime FROM t_mer_store_info a LEFT JOIN
+        t_mer_merchant_info b
+        ON a.merchantId = b.id WHERE a.deletedFlag=0
+        <if test="!(storeIdListByPromotionId ==null)">
+            AND a.id NOT IN
+            <foreach collection="storeIdListByPromotionId" item="storeId"
+                     open="(" separator="," close=")">
+                #{storeId}
+            </foreach>
+        </if>
+        <if test="!(storeName==null or storeName == '')">
+            AND a.name like CONCAT('%', #{storeName}, '%')
+        </if>
+        <if test="!(name==null or name == '')">
+            AND b.name like CONCAT('%', #{name}, '%')
+        </if>
+        <if test="!(storeId==null or storeId=='')">
+            AND a.id = #{storeId}
+        </if>
+        ORDER BY a.createdTime DESC
+    </select>
+
+    <!--根据id查店铺信息-->
+    <select id="selectStoreInfoLists" resultType="com.topaiebiz.merchant.enter.dto.StoreInfoDto">
+		SELECT  a.id,b.name AS merchantName,a.merchantId,a.name,a.merchantGradeId,a.contactTele,
+		g.`name`AS merchantGradeName  FROM t_mer_store_info a
+		LEFT JOIN  t_mer_merchant_info b ON b.id=a.merchantId
+		LEFT JOIN t_mer_merchant_grade g ON g.id=a.merchantGradeId  WHERE a.deletedFlag=0
+		AND a.id=#{storeId}
+		ORDER BY a.createdTime DESC
+	</select>
+    <!---->
+    <select id="selectStoreInfoByName" resultType="com.topaiebiz.merchant.enter.dto.StoreInfoDto">
+        SELECT s.id,s.name,s.images,s.merchantGradeId,s.storeAddress, s.displayOrder from t_mer_store_info s WHERE
+        s.deletedFlag=0 AND s.changeState != 2
+        AND s.id IN(select g.belongStore from t_goo_item g where g.`status`=2)
+        <if test="!(name==null or name == '')">
+            AND s.name like CONCAT('%', #{name}, '%') ORDER BY s.displayOrder
+        </if>
+
+
+    </select>
+
+</mapper>

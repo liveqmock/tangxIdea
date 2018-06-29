@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.topaiebiz.giftcard.dao.GiftcardLogDao">
+    <select id="queryLog" resultType="com.topaiebiz.giftcard.entity.GiftcardLog">
+        SELECT
+        cardNo,storeName,goodsName,amount,balance,logType,createdTime
+        FROM t_giftcard_log
+        WHERE 1=1
+        <if test="unitId != null">
+            AND unitId = #{unitId}
+        </if>
+        <if test="logType != null">
+            AND  logType = #{logType}
+        </if>
+        ORDER BY createdTime DESC
+    </select>
+    <select id="queryMyGiftcardLog" resultType="com.topaiebiz.giftcard.entity.GiftcardLog">
+        SELECT
+        cardNo,amount,createdTime FROM t_giftcard_log
+        WHERE memberId=#{memberId}
+        ORDER BY createdTime DESC
+    </select>
+</mapper>

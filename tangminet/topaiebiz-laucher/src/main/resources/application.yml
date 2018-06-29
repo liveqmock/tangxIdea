@@ -1,0 +1,174 @@
+server:
+  port: 80
+
+spring:
+  http:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+      enabled: true
+  datasource:
+    druid:
+      # 数据库的连接地址。
+      url: jdbc:mysql://rm-bp11c669x6gey5f7oo.mysql.rds.aliyuncs.com:3306/motherbuy_test
+      username: qianmi
+      password: jQ6mmyhDwLrmRXSv
+      # 初始化时建立的物理连接数。初始化发生在显式调用init方法，或者第一次getConnection时.
+      initial-size: 5
+      # 连接池最大物理连接数量。
+      max-active: 50
+      # 连接池最小物理连接数量。
+      min-idle: 5
+      # 获取连接时最大等待时间，单位为毫秒。
+      # 配置之后，缺省启用公平锁，并发效率会有所下降，若需要可以通过配置useUnfairLock属性为true使用非公平锁。
+      max-wait: 6000
+      # 是否缓存preparedStatement，也就是PSCache。
+      # PSCache对支持游标的数据库性能提升巨大，比如说oracle。在mysql下建议关闭。
+      pool-prepared-statements: true
+      # 要启用PSCache，其值必须大于0，当大于0时，poolPreparedStatements自动触发修改为true。
+      # 在Druid中，不会存在Oracle下PSCache占用内存过多的问题，可以把这个数值配置大一些，比如说100。
+      max-pool-prepared-statement-per-connection-size: 20
+      # 用来检测连接是否有效的sql，要求是一个查询语句，常用select 'x'。
+      # 如果validationQuery为null，testOnBorrow、testOnReturn、testWhileIdle都不会起作用。
+      validation-query: select 1 from dual
+      # 检测连接是否有效的超时时间，单位为秒。
+      # 底层调用jdbc Statement对象的void setQueryTimeout(int seconds)方法。
+#      validation-query-timeout: 30
+      # 有两个含义：
+      #  1) Destroy线程会检测连接的间隔时间，若连接空闲时间大于等于minEvictableIdleTimeMillis则关闭物理连接。
+      #  2) testWhileIdle的判断依据，详细看testWhileIdle属性的说明。
+      time-between-eviction-runs-millis: 60000
+      # 连接保持空闲而不被驱逐的最长时间。
+      min-evictable-idle-time-millis: 300000
+      # 建议配置为true，不影响性能，并且保证安全性。
+      # 申请连接的时候检测，若空闲时间大于timeBetweenEvictionRunsMillis，执行validationQuery检测连接是否有效。
+      test-while-idle: true
+      # 申请连接时执行validationQuery检测连接是否有效，做了这个配置会降低性能。
+      test-on-borrow: false
+      # 归还连接时执行validationQuery检测连接是否有效，做了这个配置会降低性能。
+      test-on-return: false
+      # 类型是字符串，通过别名的方式配置扩展的拦截器插件，常用的拦截器插件有：
+      # 监控统计用的filter:stat，日志用的filter:log4j，防御sql注入攻击的filter:wall，三个同时配置的化，用逗号隔开。
+      # 注意，Druid中的filter-class-names配置项是不起作用的，必须采用filters配置项才可以。
+      filters: stat,wall,log4j
+      # 通过connectProperties属性来打开mergeSql功能；慢SQL记录。
+      connect-properties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+      # 合并多个DruidDataSource的监控数据
+      use-global-data-source-stat: true
+      driver-class-name: com.mysql.jdbc.Driver
+  messages:
+    basename: i18n/nebula/paas/messages,i18n/topaiebiz/system/messages,i18n/topaiebiz/goods/messages,
+                i18n/topaiebiz/giftcard/messages,i18n/topaiebiz/member/messages,i18n/topaiebiz/merchant/messages,
+                i18n/topaiebiz/payment/messages,i18n/topaiebiz/promotion/messages,i18n/topaiebiz/transaction/messages,
+                i18n/topaiebiz/file/messages,i18n/topaiebiz/decorate/messages,i18n/topaiebiz/elasticsearch/messages,
+                i18n/topaiebiz/settlement/messages,
+                i18n/topaiebiz/SMS/messages,i18n/topaiebiz/thirdparty-qrcode/messages,i18n/topaiebiz/thirdparty-wechat/messages,
+                i18n/topaiebiz/timetask/messages,i18n/topaiebiz/transport/messages
+##redis配置
+redis:
+  pool:
+    host: localhost
+    port: 6379
+    password: 123456
+    max-idle: 30
+    min-idle: 20
+    max-total: 10
+    max-wait: 3000
+    block-when-exhausted: true
+
+# MyBatis Plus相关配置信息。
+mybatis-plus:
+  # 实体类与数据库表的xml映射文件的位置。
+  mapper-locations: classpath*:/dao/**/*Dao.xml
+  # 实体类的包路径。正确方式：/**/.entity或者/**.entity；错误方式：**.entity
+  typeAliasesPackage: /**.entity
+  # MyBatis Plus一些全局配置。
+  global-config:
+    # 主键类型 。 0:"数据库ID自增", 1:"用户输入ID",2:"全局唯一ID (数字类型唯一ID，适用于分布式)", 3:"全局唯一ID UUID"
+    id-type: 2
+    # 字段验证策略。 0:"忽略判断", 1:"非 NULL 判断", 2:"非空判断"
+    field-strategy: 2
+    # 表名和字段名是否使用下划线命名。
+    db-column-underline: false
+#    # 公共属性处理器，用于填充公共属性的值，例如创建时间、最后修改时间等。
+#    meta-object-handler: com.nebulaframe.data.mybatis.handler.CommonPropertyHandler
+    
+  configuration:
+    # SQL输出调试器，用于将SQL语句和结果输出到控制台，以便调试。开发测试环境使用，不建议生产环境使用。
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    
+
+#自定义短信的配置参数
+sms:
+  send:
+    # 一天限制发送条数为24条
+    limit-times-oneday: 24
+  check:
+    # 一天限制校验失败次数为10次
+    limit-times-oneday: 10
+  #短信验证码有限时间为600s
+  expire-time: 600
+  #短信发送频率时间限制90s
+  limit-time: 60
+  # 是否开启短信频率限制
+  is-limit: true
+
+header:
+  member:
+    loginId: sessionId
+    #过期时间
+    #outTime: 3000
+  user:
+    loginId: userLoginId
+    #outTime: 3000
+
+kuaidi100:
+  key_id: DSgHrnjR4696
+  customer: 8D6418487AF3CDD97F3F6A61206923F4
+  collback_url: http://101.132.106.86
+
+alisms:
+  ali_accessKey: LTAInc7bjkM1OfaK
+  ali_accessSecret: ZviTV6qw2wsdsiV6RkXPqxCegwD78F
+  #验证码失效时间 毫秒
+  failure_time: 600000
+  #间隔发送时间 单位毫秒
+  interval_time: 60000
+  #每个IP每天最多限制？条
+  limit_ip: 24
+  #每个手机号每天限制？条
+  limit_phone: 24
+  #发送限制是否开启
+  enable_flag: false
+
+#elasticSearch:
+#  transport_ip: es-cn-v0h0gnagf002q4ocm.elasticsearch.aliyuncs.com
+#  transport_port: 9300
+#  cluster_name: es-cn-v0h0gnagf002q4ocm
+#  security_user: elastic:9DyrGRCfxy5QKUG4
+#  index: goods
+
+elasticSearch:
+  transport_ip: es-cn-4590i5cug0009giib.public.elasticsearch.aliyuncs.com
+  transport_port: 9300
+  cluster_name: es-cn-4590i5cug0009giib
+  security_user: elastic:155q61fedTfreak
+  index: mmg_goods
+
+  restClient_ip: es-cn-4590i5cug0009giib.public.elasticsearch.aliyuncs.com
+  restClient_user: elastic
+  restClient_password: 155q61fedTfreak
+  restClient_port: 9200
+
+#oss:
+#  endpoint: "http://oss-cn-hangzhou.aliyuncs.com"
+#  access_key_id: "LTAI2k4KFUXkRfwN"
+#  access_key_secret: "Q3xvsc6Rq42iC0QqDtKxGcI5Qa7MJB"
+#  bucket_name: "qinziezhan"
+
+oss:
+  endpoint: "http://oss-cn-hangzhou.aliyuncs.com"
+  access_key_id: "LTAI0vc1uqZWEYRn"
+  access_key_secret: "6MBAntEILDEreoLRdQRaRIEnwp2EJR"
+  bucket_name: "shopnc-oss"
+  env: dev

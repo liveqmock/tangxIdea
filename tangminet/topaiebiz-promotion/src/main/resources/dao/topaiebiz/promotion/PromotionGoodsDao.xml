@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.topaiebiz.promotion.mgmt.dao.PromotionGoodsDao">
+
+	<!-- 根据营销活动id查询所选商品(根据item去重) -->
+	<select id="findPromotionGoodsByPromotionId" resultType="com.topaiebiz.promotion.mgmt.dto.PromotionGoodsDto">
+		SELECT DISTINCT g.storeId,
+		g.itemId ,i.itemCode,i.name as goodsName,i.defaultPrice as goodsPrice
+		FROM
+		t_pro_promotion_goods g
+		LEFT JOIN t_goo_item i ON g.itemId = i.id
+		WHERE i.deletedFlag = 0
+		AND g.promotionId = #{promotionId}
+		<if test="!(id==null or id=='')">
+			AND i.id = #{id}
+		</if>
+		<if test="!(itemCode==null or itemCode=='')">
+			AND i.itemCode = #{itemCode}
+		</if>
+		<if test="!(name==null or name=='')">
+			AND i.name like CONCAT('%', #{name}, '%')
+		</if>
+		<if test="!(belongStore==null or belongStore=='')">
+			AND g.storeId = #{belongStore}
+		</if>
+		<if test="!(ageId==null or ageId=='')">
+			AND i.ageId = #{ageId}
+		</if>
+		<if test="!(ageId==null or ageId=='')">
+			AND i.ageId = #{ageId}
+		</if>
+		<if test="!(belongBrand==null or belongBrand == '')">
+			AND i.belongBrand = #{belongBrand}
+		</if>
+		ORDER BY i.itemCode
+	</select>
+	
+	<!-- 商家报名商品 -->
+	<select id = "selectStoreEnrolGoodsList" resultType="com.topaiebiz.promotion.mgmt.dto.PromotionGoodsDto">
+	
+		SELECT DISTINCT
+			g.itemId ,i.itemCode,i.name as goodsName,i.defaultPrice as goodsPrice,g.state
+		FROM t_pro_promotion_goods g
+		LEFT JOIN t_goo_item i ON g.itemId = i.id
+		WHERE g.promotionId = #{promotionId} AND g.storeId = #{storeId}
+		<if test="!(state==null or state=='')">
+			AND g.state = #{state}
+		</if>
+	
+	</select>
+	
+	<!-- 报名商家商品审核列表(分页查询) -->
+	<select id = "selectStoreGoodsAuditList" resultType="com.topaiebiz.promotion.mgmt.dto.PromotionGoodsDto">
+	SELECT DISTINCT g.itemId ,i.itemCode,i.name as goodsName,i.defaultPrice as goodsPrice
+		FROM t_pro_promotion_goods g
+		LEFT JOIN t_goo_item i ON g.itemId = i.id
+		WHERE g.deletedFlag = 0 AND i.deletedFlag = 0
+		<if test="!(promotionId==null or promotionId=='')">
+			AND g.promotionId = #{promotionId}
+		</if>
+		<if test="!(state==null or state=='')">
+			AND g.state = #{state}
+		</if>
+		<if test="!(storeId==null or storeId=='')">
+			AND g.storeId = #{storeId}
+		</if>
+		<if test="!(itemCode==null or itemCode=='')">
+			AND i.itemCode = #{itemCode}
+		</if>
+		<if test="!(goodsName ==null or goodsName=='')">
+			AND i.name like CONCAT('%', #{goodsName}, '%')
+		</if>
+	</select>
+
+	<!-- C端获取活动适用商品，根据itemId去重 -->
+	<select id="selectPromotionApplicableGoods" resultType="com.topaiebiz.promotion.mgmt.dto.PromotionGoodsDto">
+		SELECT DISTINCT itemId
+		FROM t_pro_promotion_goods
+		WHERE deletedFlag = 0
+		<if test="!(promotionId==null or promotionId=='')">
+			AND promotionId = #{promotionId}
+		</if>
+		<if test="!(storeId==null or storeId=='')">
+			AND storeId = #{storeId}
+		</if>
+		<if test="!(state==null or state=='')">
+			AND state = #{state}
+		</if>
+
+	</select>
+
+</mapper>

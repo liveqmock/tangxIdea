@@ -1,0 +1,122 @@
+dataSources:
+  logDataSource: !!com.alibaba.druid.pool.DruidDataSource
+    driverClassName: com.mysql.jdbc.Driver
+    url: jdbc:mysql://rm-bp11c669x6gey5f7oo.mysql.rds.aliyuncs.com:3306/motherbuy_log_prod?characterEncoding=utf8
+    username: qianmi
+    password: jQ6mmyhDwLrmRXSv
+    # 初始化时建立的物理连接数。初始化发生在显式调用init方法，或者第一次getConnection时.
+    initialSize: 5
+    # 连接池最大物理连接数量。
+    maxActive: 50
+    # 连接池最小物理连接数量。
+    minIdle: 5
+    # 获取连接时最大等待时间，单位为毫秒。
+    # 配置之后，缺省启用公平锁，并发效率会有所下降，若需要可以通过配置useUnfairLock属性为true使用非公平锁。
+    maxWait: 6000
+    # 是否缓存preparedStatement，也就是PSCache。
+    # PSCache对支持游标的数据库性能提升巨大，比如说oracle。在mysql下建议关闭。
+    poolPreparedStatements: true
+    # 要启用PSCache，其值必须大于0，当大于0时，poolPreparedStatements自动触发修改为true。
+    # 在Druid中，不会存在Oracle下PSCache占用内存过多的问题，可以把这个数值配置大一些，比如说100。
+    maxPoolPreparedStatementPerConnectionSize: 20
+    # 用来检测连接是否有效的sql，要求是一个查询语句，常用select 'x'。
+    # 如果validationQuery为null，testOnBorrow、testOnReturn、testWhileIdle都不会起作用。
+    validationQuery: select 1
+    # 检测连接是否有效的超时时间，单位为秒。
+    # 底层调用jdbc Statement对象的void setQueryTimeout(int seconds)方法。
+    # validation-query-timeout: 30
+    # 有两个含义：
+    #  1) Destroy线程会检测连接的间隔时间，若连接空闲时间大于等于minEvictableIdleTimeMillis则关闭物理连接。
+    #  2) testWhileIdle的判断依据，详细看testWhileIdle属性的说明。
+    timeBetweenEvictionRunsMillis: 60000
+    # 连接保持空闲而不被驱逐的最长时间。
+    minEvictableIdleTimeMillis: 300000
+    # 建议配置为true，不影响性能，并且保证安全性。
+    # 申请连接的时候检测，若空闲时间大于timeBetweenEvictionRunsMillis，执行validationQuery检测连接是否有效。
+    testWhileIdle: true
+    # 申请连接时执行validationQuery检测连接是否有效，做了这个配置会降低性能。
+    testOnBorrow: false
+    # 归还连接时执行validationQuery检测连接是否有效，做了这个配置会降低性能。
+    testOnReturn: false
+    # 类型是字符串，通过别名的方式配置扩展的拦截器插件，常用的拦截器插件有：
+    # 监控统计用的filter:stat，日志用的filter:log4j，防御sql注入攻击的filter:wall，三个同时配置的化，用逗号隔开。
+    # 注意，Druid中的filter-class-names配置项是不起作用的，必须采用filters配置项才可以。
+    filters: stat,wall,log4j
+    # 通过connectProperties属性来打开mergeSql功能；慢SQL记录。
+    # connectProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+    # 合并多个DruidDataSource的监控数据
+    useGlobalDataSourceStat: true
+  bizDataSource: !!com.alibaba.druid.pool.DruidDataSource
+    driverClassName: com.mysql.jdbc.Driver
+    url: jdbc:mysql://rm-bp11c669x6gey5f7oo.mysql.rds.aliyuncs.com:3306/motherbuy_prod?characterEncoding=utf8
+    username: qianmi
+    password: jQ6mmyhDwLrmRXSv
+    # 初始化时建立的物理连接数。初始化发生在显式调用init方法，或者第一次getConnection时.
+    initialSize: 5
+    # 连接池最大物理连接数量。
+    maxActive: 50
+    # 连接池最小物理连接数量。
+    minIdle: 5
+    # 获取连接时最大等待时间，单位为毫秒。
+    # 配置之后，缺省启用公平锁，并发效率会有所下降，若需要可以通过配置useUnfairLock属性为true使用非公平锁。
+    maxWait: 6000
+    # 是否缓存preparedStatement，也就是PSCache。
+    # PSCache对支持游标的数据库性能提升巨大，比如说oracle。在mysql下建议关闭。
+    poolPreparedStatements: true
+    # 要启用PSCache，其值必须大于0，当大于0时，poolPreparedStatements自动触发修改为true。
+    # 在Druid中，不会存在Oracle下PSCache占用内存过多的问题，可以把这个数值配置大一些，比如说100。
+    maxPoolPreparedStatementPerConnectionSize: 20
+    # 用来检测连接是否有效的sql，要求是一个查询语句，常用select 'x'。
+    # 如果validationQuery为null，testOnBorrow、testOnReturn、testWhileIdle都不会起作用。
+    validationQuery: select 1
+    # 检测连接是否有效的超时时间，单位为秒。
+    # 底层调用jdbc Statement对象的void setQueryTimeout(int seconds)方法。
+    # validation-query-timeout: 30
+    # 有两个含义：
+    #  1) Destroy线程会检测连接的间隔时间，若连接空闲时间大于等于minEvictableIdleTimeMillis则关闭物理连接。
+    #  2) testWhileIdle的判断依据，详细看testWhileIdle属性的说明。
+    timeBetweenEvictionRunsMillis: 60000
+    # 连接保持空闲而不被驱逐的最长时间。
+    minEvictableIdleTimeMillis: 300000
+    # 建议配置为true，不影响性能，并且保证安全性。
+    # 申请连接的时候检测，若空闲时间大于timeBetweenEvictionRunsMillis，执行validationQuery检测连接是否有效。
+    testWhileIdle: true
+    # 申请连接时执行validationQuery检测连接是否有效，做了这个配置会降低性能。
+    testOnBorrow: false
+    # 归还连接时执行validationQuery检测连接是否有效，做了这个配置会降低性能。
+    testOnReturn: false
+    # 类型是字符串，通过别名的方式配置扩展的拦截器插件，常用的拦截器插件有：
+    # 监控统计用的filter:stat，日志用的filter:log4j，防御sql注入攻击的filter:wall，三个同时配置的化，用逗号隔开。
+    # 注意，Druid中的filter-class-names配置项是不起作用的，必须采用filters配置项才可以。
+    filters: stat,wall,log4j
+    # 通过connectProperties属性来打开mergeSql功能；慢SQL记录。
+    # connectProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+    # 合并多个DruidDataSource的监控数据
+    useGlobalDataSourceStat: true
+
+
+shardingRule:
+  defaultDataSourceName: bizDataSource
+  tables:
+    t_mem_member_balance_log :
+      logicTable: t_mem_member_balance_log
+      actualDataNodes: logDataSource.t_mem_member_balance_log_${0..1}
+      databaseStrategy:
+        inline:
+          shardingColumn: memberId
+          algorithmExpression: logDataSource
+      tableStrategy:
+        inline:
+          shardingColumn: memberId
+          algorithmExpression: t_mem_member_balance_log_${memberId % 2}
+    t_mem_member_point_log:
+      logicTable: t_mem_member_point_log
+      actualDataNodes: logDataSource.t_mem_member_point_log_${0..1}
+      databaseStrategy:
+        inline:
+          shardingColumn: memberId
+          algorithmExpression: logDataSource
+      tableStrategy:
+        inline:
+          shardingColumn: memberId
+          algorithmExpression: t_mem_member_point_log_${memberId % 2}

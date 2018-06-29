@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.topaiebiz.giftcard.dao.GiftcardUnitDao">
+    <select id="queryGiftcard" resultType="com.topaiebiz.giftcard.entity.GiftcardUnit">
+        SELECT
+        gu.id AS id,
+        gu.cardNo AS cardNo,
+        gu.batchId AS batchNo,
+        gu.createdTime AS createdTime,
+        gu.cardStatus AS cardStatus,
+        gu.deadTime AS deadTime,
+        gu.labelId AS labelId,
+        gi.validDays AS validDays,
+        gi.cardName AS cardName,
+        gi.faceValue AS faceValue,
+        gi.salePrice AS salePrice,
+        gi.issueNum AS issueNum,
+        gi.cover AS cover,
+        gi.priority AS priority,
+        gi.cardAttr AS  cardAttr,
+        gl.labelName AS labelName
+        FROM t_giftcard_unit gu
+        LEFT JOIN t_giftcard_batch gi
+        ON gu.batchId = gi.id
+        LEFT JOIN t_giftcard_label gl
+        ON gu.labelId = gl.id
+        WHERE gu.delFlag = 0 and gu.id>0
+        <if test="cardNo != null">
+            AND gu.cardNo = #{cardNo}
+        </if>
+        <if test="cardNoStart != null and cardNoEnd != null">
+            AND cardNo BETWEEN #{cardNoStart} AND #{cardNoEnd}
+        </if>
+        <if test="batchNo != null">
+            AND gu.batchId = #{batchNo}
+        </if>
+        <if test="labelId != null">
+            AND gi.labelId = #{labelId}
+        </if>
+        <if test="cardStatus != null">
+            AND gu.cardStatus = #{cardStatus}
+        </if>
+        <if test="medium != null">
+            AND gi.medium = #{medium}
+        </if>
+        <if test="startTime != null">
+            AND gu.createdTime &gt;= #{startTime}
+        </if>
+        <if  test=" endTime != null">
+            AND gu.createdTime &lt;= #{endTime}
+        </if>
+        ORDER BY gu.batchId desc ,gu.id DESC
+    </select>
+
+    <select id="getGiftcardInfo" resultType="com.topaiebiz.giftcard.entity.GiftcardUnit">
+        SELECT
+        gu.id AS id,
+        gu.cardNo AS cardNo,
+        gu.batchId AS batchId,
+        gu.bindingTime AS bindingTime,
+        gu.createdTime AS createdTime,
+        gu.cardStatus AS cardStatus,
+        gu.labelId AS labelId,
+        gu.balance AS balance,
+        gu.password AS password,
+        gu.givenStatus AS givenStatus,
+        gu.deadTime AS deadTime,
+        gu.owner AS owner,
+        gi.validDays AS validDays,
+        gi.cardName AS cardName,
+        gi.faceValue AS faceValue,
+        gi.salePrice AS salePrice,
+        gi.issueNum AS issueNum,
+        gi.cardAttr AS cardAttr,
+        gi.cover AS cover,
+        gi.priority AS priority,
+        gi.medium AS medium,
+        gi.subtitle AS subtitle,
+        gi.platformDiscount AS platformDiscount,
+        gi.storeDiscount AS storeDiscount,
+        gl.labelName AS labelName
+        FROM t_giftcard_unit gu
+        LEFT JOIN t_giftcard_batch gi
+        ON gu.batchId = gi.id
+        LEFT JOIN t_giftcard_label gl
+        ON gu.labelId = gl.id
+        WHERE gu.delFlag = 0
+        <if test="id != null">
+            AND gu.id = #{id}
+        </if>
+        <if test="cardNo != null">
+            AND gu.cardNo = #{cardNo}
+        </if>
+        limit 1
+    </select>
+    <select id="selectMemberBoundCards" resultType="com.topaiebiz.giftcard.entity.GiftcardUnit">
+        SELECT
+        gu.id AS id,
+        gu.cardNo AS cardNo,
+        gu.createdTime AS createdTime,
+        gu.cardStatus AS cardStatus,
+        gu.deadTime AS deadTime,
+        gu.balance AS balance,
+        gu.batchId AS  batchId,
+        gi.priority AS priority,
+        gi.applyScope AS applyScope,
+        gi.storeIds AS storeIds,
+        gi.cardName AS cardName,
+        gi.medium as medium,
+        gi.cover AS cover,
+        gi.faceValue AS faceValue
+        FROM t_giftcard_unit gu
+        LEFT JOIN t_giftcard_batch gi
+        ON gu.batchId = gi.id
+        WHERE gu.delFlag = 0 AND gu.bindingMember = #{bindingMember}
+    </select>
+    <select id="selectMyGiftcardByCategory" resultType="com.topaiebiz.giftcard.entity.GiftcardUnit">
+        SELECT
+        gu.id AS id,
+        gu.cardNo AS cardNo,
+        gu.batchId AS batchId,
+        gu.createdTime AS createdTime,
+        gu.cardStatus AS cardStatus,
+        gu.deadTime AS deadTime,
+        gu.balance AS balance,
+        gu.givenStatus AS givenStatus,
+        gi.priority AS priority,
+        gi.applyScope AS applyScope,
+        gi.storeIds AS storeIds,
+        gi.cardName AS cardName,
+        gi.medium as medium,
+        gi.cover AS cover,
+        gi.faceValue AS faceValue
+        FROM t_giftcard_unit gu
+        LEFT JOIN t_giftcard_batch gi
+        ON gu.batchId = gi.id
+        WHERE gu.delFlag = 0 AND gu.bindingMember = #{bindingMember}
+        <choose>
+            <when test="category != null and category==1">
+                AND gu.cardStatus = 2
+                AND gu.balance &gt;0
+            </when>
+            <when test="category != null and category==0">
+                AND (gu.cardStatus IN (3,4,5) OR gu.balance = 0)
+            </when>
+            <otherwise>
+                AND gu.cardStatus = -1
+            </otherwise>
+        </choose>
+    </select>
+    <select id="countByMemberAndBatch" resultType="java.lang.Integer">
+        SELECT count(id) FROM t_giftcard_unit WHERE batchId=#{batchId} AND owner = #{owner}
+    </select>
+    <select id="selectBalanceByMemberList" resultType="java.util.Map">
+        SELECT bindingMember AS memberId,SUM(balance) AS balance
+        FROM t_giftcard_unit
+        WHERE delFlag=0
+        <choose>
+            <when test="useType != null and useType==1">
+                AND cardStatus = 2
+            </when>
+            <otherwise>
+                AND cardStatus !=2
+            </otherwise>
+        </choose>
+        AND bindingMember IN
+        <foreach collection="memberIdList" index="index" item="memberId" open="(" separator="," close=")">
+            #{memberId}
+        </foreach>
+        GROUP BY memberId
+    </select>
+    <select id="selectCardNumByStatus" resultType="java.util.Map">
+        SELECT cardStatus,count(id) as usageNum from t_giftcard_unit WHERE batchId=#{batchId} GROUP BY cardStatus
+    </select>
+</mapper>

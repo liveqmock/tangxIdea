@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.topaiebiz.decorate.dao.PageComponentDao">
+    <insert id="insertBatch" parameterType="java.util.List">
+        INSERT INTO t_dec_page_component
+        (id,name,pageId,sortNo,type,creatorId,createdTime,
+        lastModifierId,lastModifiedTime,deletedFlag,version)
+        VALUES
+        <foreach collection="list" item="item" index="index" separator="," >
+            (#{item.id},#{item.name},#{item.pageId},#{item.sortNo},
+            #{item.type},#{item.creatorId},#{item.createdTime},#{item.lastModifierId},
+            #{item.lastModifiedTime},#{item.deletedFlag},#{item.version})
+        </foreach>
+    </insert>
+</mapper>

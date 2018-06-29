@@ -1,0 +1,219 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <!-- 表示当前项目采用的POM模型版本是4.0.0。 -->
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- 表示topaiebiz-online项目是topaiebiz-parent项目的子项目或模块。 -->
+    <parent>
+        <groupId>com.topaiebiz</groupId>
+        <artifactId>topaiebiz-parent</artifactId>
+        <version>2.0.0-SNAPSHOT</version>
+    </parent>
+
+    <!-- topaiebiz-online项目的基础信息。 -->
+    <artifactId>topaiebiz-online</artifactId>
+    <name>topaiebiz-online</name>
+    <description>Topaiebiz智能电子商务平台的子平台 - 线上平台。</description>
+
+    <!-- topaiebiz-online项目的依赖库列表。 -->
+    <dependencies>
+        <dependency>
+            <groupId>com.nebulapaas</groupId>
+            <artifactId>nebula-paas-ssmyb-sysmgt</artifactId>
+        </dependency>
+        <!-- 关系型数据库MySQL的JDBC连接驱动的依赖库。 -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+        </dependency>
+        <!-- topaiebiz智能电子商务平台各子模块的的依赖 -->
+        <dependency>
+            <groupId>com.topaiebiz</groupId>
+            <artifactId>topaiebiz-system</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.topaiebiz</groupId>
+            <artifactId>topaiebiz-goods</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.topaiebiz</groupId>
+            <artifactId>topaiebiz-member</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.topaiebiz</groupId>
+            <artifactId>topaiebiz-merchant</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.topaiebiz</groupId>
+            <artifactId>topaiebiz-giftcard</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.topaiebiz</groupId>
+            <artifactId>topaiebiz-transaction</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.topaiebiz</groupId>
+            <artifactId>topaiebiz-promotion</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.topaiebiz</groupId>
+            <artifactId>topaiebiz-settlement</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.topaiebiz</groupId>
+            <artifactId>topaiebiz-transport</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.topaiebiz</groupId>
+            <artifactId>topaiebiz-SMS</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.topaiebiz</groupId>
+            <artifactId>topaiebiz-decorate</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.topaiebiz</groupId>
+            <artifactId>topaiebiz-elasticsearch</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.topaiebiz</groupId>
+            <artifactId>topaiebiz-thirdparty-wechat</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.topaiebiz</groupId>
+            <artifactId>topaiebiz-payment</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.topaiebiz</groupId>
+            <artifactId>topaiebiz-openapi</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.topaiebiz</groupId>
+            <artifactId>topaiebiz-file</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.topaiebiz</groupId>
+            <artifactId>topaiebiz-monitor</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.topaiebiz</groupId>
+            <artifactId>topaiebiz-timetask</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid</artifactId>
+        </dependency>
+        <!-- SLF4J && Log4J -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.topaiebiz</groupId>
+            <artifactId>topaiebiz-guider</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.shardingjdbc</groupId>
+            <artifactId>sharding-jdbc-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.lmax</groupId>
+            <artifactId>disruptor</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>${finalName}</finalName>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/*</include>
+                </includes>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.8</version>
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <configuration>
+                            <target name="copy" if="${ant.overwrite}">
+                                <copy todir="${project.build.outputDirectory}" overwrite="true">
+                                    <fileset dir="./config/${ant.file}">
+                                        <include name="**/*"/>
+                                    </fileset>
+                                </copy>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <properties>
+                <ant.overwrite>false</ant.overwrite>
+                <ant.file>dev</ant.file>
+            </properties>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+        <profile>
+            <id>prod</id>
+            <properties>
+                <ant.overwrite>true</ant.overwrite>
+                <ant.file>prod</ant.file>
+            </properties>
+        </profile>
+        <profile>
+            <id>pre</id>
+            <properties>
+                <ant.overwrite>true</ant.overwrite>
+                <ant.file>pre</ant.file>
+            </properties>
+        </profile>
+        <profile>
+            <id>test</id>
+            <properties>
+                <ant.overwrite>true</ant.overwrite>
+                <ant.file>test</ant.file>
+            </properties>
+        </profile>
+    </profiles>
+</project>

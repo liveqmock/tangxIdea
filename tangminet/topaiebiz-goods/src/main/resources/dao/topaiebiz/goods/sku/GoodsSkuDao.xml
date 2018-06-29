@@ -1,0 +1,67 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.topaiebiz.goods.sku.dao.GoodsSkuDao">
+  	
+  	<!-- 逻辑删除商品sku信息 -->
+  	<update id="deleteGoodsSku">
+  		UPDATE t_goo_goods_sku SET deletedFlag = 1 WHERE id = #{id}
+  	</update>
+  	
+  	<!-- 查询商品sku -->
+  	<select id="selectGoodsSku" resultType="com.topaiebiz.goods.sku.entity.GoodsSkuEntity">
+  		SELECT id,version FROM t_goo_goods_sku
+  		WHERE itemId = #{itemId} AND deletedFlag = 0
+  	</select>
+  	
+  	<!-- 根据id查询商品item -->
+  	<select id="selectGoodsSkuById" resultType="com.topaiebiz.goods.sku.dto.GoodsSkuDto">
+  		SELECT id,itemId,spuId,baseFieldValue,saleFieldValue,stockNumber,salesVolume,
+  		saleImage,price,articleNumber,barCode FROM t_goo_goods_sku 
+  		WHERE itemId = #{id} AND deletedFlag = 0
+  	</select>
+  	
+  	<!-- 根据id查询商品sku信息 -->
+  	<select id="selectGoodsSkuBySkuId" resultType="com.topaiebiz.goods.sku.entity.GoodsSkuEntity">
+  		SELECT id,itemId,spuId,baseFieldValue,saleFieldValue
+  		saleImage,price,articleNumber,stockNumber,barCode FROM t_goo_goods_sku
+  		WHERE id = #{id} AND deletedFlag = 0
+  	</select>
+  	
+  	<!-- 根据skuId查询商品信息,状态为2  -->
+  	<select id="selectGoodsSkuDtoBySkuId" resultType="com.topaiebiz.goods.sku.dto.GoodsSkuDto">
+  		SELECT gs.id,gs.stockNumber,gi.status status
+        FROM t_goo_item gi join t_goo_goods_sku gs ON gi.id = gs.itemId  
+        AND gs.deletedFlag = 0 AND gi.status = 2
+  	</select>
+  	
+  	<!-- 根据id查询商品sku信息  -->
+  	<select id="selectGoodsSkuDtoById" resultType="com.topaiebiz.goods.sku.dto.GoodsSkuDto">
+  		SELECT id,itemId,spuId,baseFieldValue,saleFieldValue
+  		saleImage,price,articleNumber,barCode FROM t_goo_goods_sku 
+  		WHERE id = #{id} AND deletedFlag = 0
+  	</select>
+  	
+    <!-- 减库存 -->
+	<update id="reduceStock">
+		UPDATE t_goo_goods_sku SET stockNumber = stockNumber - #{number},salesVolume = salesVolume + #{number} WHERE id = #{skuId} AND stockNumber >= #{number} AND deletedFlag = 0
+	</update>
+	<!-- 库存回退 -->
+	<update id="backStock">
+		UPDATE t_goo_goods_sku SET stockNumber = stockNumber + #{number},salesVolume = salesVolume - #{number} WHERE id = #{skuId} AND salesVolume >= #{number}
+	</update>
+
+	<!--根据itemId查询商品sku信息-->
+	<select id="selectGoodsSkuDTO" resultType="com.topaiebiz.goods.dto.sku.GoodsSkuDTO">
+		  SELECT id,itemId,spuId,baseFieldValue,saleFieldValue,stockNumber,
+  		  saleImage,price,articleNumber,barCode FROM t_goo_goods_sku
+  		  WHERE itemId = #{itemId} AND deletedFlag = 0
+	</select>
+	<select id="selectSkuList" resultType="com.topaiebiz.goods.sku.entity.GoodsSkuEntity">
+
+		select id,itemId from t_goo_goods_sku where id IN
+		<foreach collection="skuIds" item="id" open="(" separator=","
+				 close=")">
+			#{id}
+		</foreach>
+	</select>
+
+</mapper>

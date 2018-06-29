@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.topaiebiz.promotion.mgmt.dao.PromotionLogDao" >
+  <resultMap id="BaseResultMap" type="com.topaiebiz.promotion.mgmt.entity.PromotionLogEntity" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="promotionId" property="promotionid" jdbcType="BIGINT" />
+    <result column="createdTime" property="createdtime" jdbcType="TIMESTAMP" />
+    <result column="operationType" property="operationtype" jdbcType="TINYINT" />
+    <result column="operationUser" property="operationuser" jdbcType="VARCHAR" />
+    <result column="memo" property="memo" jdbcType="VARCHAR" />
+    <result column="creatorId" property="creatorid" jdbcType="BIGINT" />
+    <result column="lastModifierId" property="lastmodifierid" jdbcType="BIGINT" />
+    <result column="lastModifiedTime" property="lastmodifiedtime" jdbcType="TIMESTAMP" />
+    <result column="version" property="version" jdbcType="BIGINT" />
+    <result column="deletedFlag" property="deletedflag" jdbcType="TINYINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, promotionId, createdTime, operationType, operationUser, memo, creatorId, lastModifierId, 
+    lastModifiedTime, version, deletedFlag
+  </sql>
+  <sql id="whereClause" >
+    where 1 = 1
+    <if test="id != null" >
+       and id = #{id,jdbcType=BIGINT}
+    </if>
+    <if test="promotionid != null" >
+       and promotionId = #{promotionid,jdbcType=BIGINT}
+    </if>
+    <if test="createdtime != null" >
+       and createdTime = #{createdtime,jdbcType=TIMESTAMP}
+    </if>
+    <if test="operationtype != null" >
+       and operationType = #{operationtype,jdbcType=TINYINT}
+    </if>
+    <if test="operationuser != null" >
+       and operationUser = #{operationuser,jdbcType=VARCHAR}
+    </if>
+    <if test="memo != null" >
+       and memo = #{memo,jdbcType=VARCHAR}
+    </if>
+    <if test="creatorid != null" >
+       and creatorId = #{creatorid,jdbcType=BIGINT}
+    </if>
+    <if test="lastmodifierid != null" >
+       and lastModifierId = #{lastmodifierid,jdbcType=BIGINT}
+    </if>
+    <if test="lastmodifiedtime != null" >
+       and lastModifiedTime = #{lastmodifiedtime,jdbcType=TIMESTAMP}
+    </if>
+    <if test="version != null" >
+       and version = #{version,jdbcType=BIGINT}
+    </if>
+    <if test="deletedflag != null" >
+       and deletedFlag = #{deletedflag,jdbcType=TINYINT}
+    </if>
+  </sql>
+  <sql id="sort" >
+    <if test="orderByStr != null" >
+       order by ${orderByStr}
+    </if>
+  </sql>
+  <sql id="lock" >
+    <if test="lock != null and lock == true" >
+       for update
+    </if>
+  </sql>
+  <select id="get" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_pro_promotion_log
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="delete" parameterType="java.lang.Long" >
+    delete from t_pro_promotion_log
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <select id="count" resultType="java.lang.Long" >
+    select count(1)
+    from t_pro_promotion_log
+    <include refid="whereClause" />
+  </select>
+  <select id="findOne" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from t_pro_promotion_log
+    <include refid="whereClause" />
+    <include refid="sort" />
+    <include refid="lock" />
+  </select>
+  <select id="find" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from t_pro_promotion_log
+    <include refid="whereClause" />
+    <include refid="sort" />
+    <include refid="lock" />
+  </select>
+  <insert id="save" parameterType="com.topaiebiz.promotion.mgmt.entity.PromotionLogEntity" useGeneratedKeys="true" keyProperty="id" >
+    insert into t_pro_promotion_log (promotionId, createdTime, operationType, 
+      operationUser, memo, creatorId, 
+      lastModifierId, lastModifiedTime, version, 
+      deletedFlag)
+    values (#{promotionid,jdbcType=BIGINT}, #{createdtime,jdbcType=TIMESTAMP}, #{operationtype,jdbcType=TINYINT}, 
+      #{operationuser,jdbcType=VARCHAR}, #{memo,jdbcType=VARCHAR}, #{creatorid,jdbcType=BIGINT}, 
+      #{lastmodifierid,jdbcType=BIGINT}, #{lastmodifiedtime,jdbcType=TIMESTAMP}, #{version,jdbcType=BIGINT}, 
+      #{deletedflag,jdbcType=TINYINT})
+  </insert>
+  <insert id="saveSte" parameterType="com.topaiebiz.promotion.mgmt.entity.PromotionLogEntity" useGeneratedKeys="true" keyProperty="id" >
+    insert into t_pro_promotion_log
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="promotionid != null" >
+        promotionId,
+      </if>
+      <if test="createdtime != null" >
+        createdTime,
+      </if>
+      <if test="operationtype != null" >
+        operationType,
+      </if>
+      <if test="operationuser != null" >
+        operationUser,
+      </if>
+      <if test="memo != null" >
+        memo,
+      </if>
+      <if test="creatorid != null" >
+        creatorId,
+      </if>
+      <if test="lastmodifierid != null" >
+        lastModifierId,
+      </if>
+      <if test="lastmodifiedtime != null" >
+        lastModifiedTime,
+      </if>
+      <if test="version != null" >
+        version,
+      </if>
+      <if test="deletedflag != null" >
+        deletedFlag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="promotionid != null" >
+        #{promotionid,jdbcType=BIGINT},
+      </if>
+      <if test="createdtime != null" >
+        #{createdtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="operationtype != null" >
+        #{operationtype,jdbcType=TINYINT},
+      </if>
+      <if test="operationuser != null" >
+        #{operationuser,jdbcType=VARCHAR},
+      </if>
+      <if test="memo != null" >
+        #{memo,jdbcType=VARCHAR},
+      </if>
+      <if test="creatorid != null" >
+        #{creatorid,jdbcType=BIGINT},
+      </if>
+      <if test="lastmodifierid != null" >
+        #{lastmodifierid,jdbcType=BIGINT},
+      </if>
+      <if test="lastmodifiedtime != null" >
+        #{lastmodifiedtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="version != null" >
+        #{version,jdbcType=BIGINT},
+      </if>
+      <if test="deletedflag != null" >
+        #{deletedflag,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateSte" parameterType="com.topaiebiz.promotion.mgmt.entity.PromotionLogEntity" >
+    update t_pro_promotion_log
+    <set >
+      <if test="promotionid != null" >
+        promotionId = #{promotionid,jdbcType=BIGINT},
+      </if>
+      <if test="createdtime != null" >
+        createdTime = #{createdtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="operationtype != null" >
+        operationType = #{operationtype,jdbcType=TINYINT},
+      </if>
+      <if test="operationuser != null" >
+        operationUser = #{operationuser,jdbcType=VARCHAR},
+      </if>
+      <if test="memo != null" >
+        memo = #{memo,jdbcType=VARCHAR},
+      </if>
+      <if test="creatorid != null" >
+        creatorId = #{creatorid,jdbcType=BIGINT},
+      </if>
+      <if test="lastmodifierid != null" >
+        lastModifierId = #{lastmodifierid,jdbcType=BIGINT},
+      </if>
+      <if test="lastmodifiedtime != null" >
+        lastModifiedTime = #{lastmodifiedtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="version != null" >
+        version = #{version,jdbcType=BIGINT},
+      </if>
+      <if test="deletedflag != null" >
+        deletedFlag = #{deletedflag,jdbcType=TINYINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="update" parameterType="com.topaiebiz.promotion.mgmt.entity.PromotionLogEntity" >
+    update t_pro_promotion_log
+    set promotionId = #{promotionid,jdbcType=BIGINT},
+      createdTime = #{createdtime,jdbcType=TIMESTAMP},
+      operationType = #{operationtype,jdbcType=TINYINT},
+      operationUser = #{operationuser,jdbcType=VARCHAR},
+      memo = #{memo,jdbcType=VARCHAR},
+      creatorId = #{creatorid,jdbcType=BIGINT},
+      lastModifierId = #{lastmodifierid,jdbcType=BIGINT},
+      lastModifiedTime = #{lastmodifiedtime,jdbcType=TIMESTAMP},
+      version = #{version,jdbcType=BIGINT},
+      deletedFlag = #{deletedflag,jdbcType=TINYINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

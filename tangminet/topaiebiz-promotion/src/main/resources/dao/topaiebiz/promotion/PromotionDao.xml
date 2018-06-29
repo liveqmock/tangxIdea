@@ -1,0 +1,399 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.topaiebiz.promotion.mgmt.dao.PromotionDao">
+
+    <!-- 营销活动列表 -->
+    <select id="selectPromotionList" resultType="com.topaiebiz.promotion.mgmt.dto.PromotionDto">
+        SELECT
+        id,name,
+        subType,
+        createdTime,
+        startTime,
+        endTime,
+        applyStartTime,
+        applyEndTime,
+        discountValue,
+        amount,
+        usedAmount,
+        createdTime,
+        orderGoodsNum,
+        orderTotalPrice,
+        payUserNum,
+        usedAmount,
+        orderNum,
+        activeConfig,
+        discountValue * orderNum AS totalDiscount,
+        marketState FROM
+        t_pro_promotion
+        WHERE deletedFlag = 0
+        <if test="!(name==null or name=='')">
+            AND name like CONCAT('%', #{name}, '%')
+        </if>
+        <if test="!(typeId==null or typeId=='')">
+            AND typeId = #{typeId}
+        </if>
+        <if test="!(marketState==null ) and typeId == 4">
+            <if test="!(marketState==null  ) and marketState == 0">
+                AND marketState = #{marketState}
+            </if>
+            <if test="!(marketState==null ) and marketState == 1">
+                AND (marketState = #{marketState} <![CDATA[ and now() < endTime ]]> OR marketState = 2 OR marketState =
+                1)
+            </if>
+            <if test="!(marketState==null ) and marketState == 2">
+                AND ((marketState = 1 <![CDATA[ and now() > endTime ]]>) OR marketState = 3)
+            </if>
+        </if>
+        <if test="!(marketState==null ) and typeId == 7">
+            <if test="!(marketState==null  ) and marketState != 1 and marketState != 2 and marketState != 3">
+                AND marketState = #{marketState}
+            </if>
+            <if test="!(marketState==null ) and marketState == 1">
+                AND ((marketState = 6  <![CDATA[ and now() < startTime ]]>) OR marketState = 1)
+            </if>
+            <if test="!(marketState==null ) and marketState == 2">
+                AND ((marketState = 6  <![CDATA[ and now() < endTime ]]>  <![CDATA[ and  now() > startTime ]]>) OR
+                marketState = 2)
+            </if>
+            <if test="!(marketState==null ) and marketState == 3">
+                AND ((marketState = 6  <![CDATA[ and  now() > endTime ]]>) OR marketState = 3)
+            </if>
+        </if>
+        <if test="!(marketState==null ) and (typeId == 1 or typeId == 2  or typeId == 3 or typeId == 5  or typeId == 6 or typeId == 8 or typeId == 9 or typeId == 10)">
+            <if test="!(marketState==null and marketState == '')">
+                AND marketState = #{marketState}
+            </if>
+        </if>
+        <if test="!(marketState==null ) and typeId == 4">
+
+        </if>
+        <if test="!(sponsorType==null or sponsorType=='')">
+            AND sponsorType = #{sponsorType}
+        </if>
+        <if test="!(promotionStart==null or promotionStart=='')">
+            <![CDATA[ and endTime > #{promotionStart}]]>
+        </if>
+        <if test="!(promotionEnd==null or promotionEnd=='')">
+            <![CDATA[ and endTime < #{promotionEnd}]]>
+        </if>
+        <if test="!(createdStartTime==null or createdStartTime=='')">
+            <![CDATA[ and createdTime > #{createdStartTime}]]>
+        </if>
+        <if test="!(createdEndTime==null or createdEndTime=='')">
+            <![CDATA[ and createdTime < #{createdEndTime}]]>
+        </if>
+        ORDER BY createdTime DESC
+    </select>
+
+    <!-- 查询秒杀活动时间集合 -->
+    <select id="selectSeckillStartTimeList" resultType="com.topaiebiz.promotion.mgmt.dto.HomeSeckillDto">
+		SELECT
+		id,
+		NAME,
+		showType,
+		showTitle,
+		startTime,
+		marketState
+		FROM
+		t_pro_promotion
+		WHERE typeId = 6
+		AND deletedFlag = 0
+		AND endTime > NOW()
+		AND marketState in(1,2)
+		ORDER BY marketState
+		DESC,startTime,createdTime
+	</select>
+
+    <!-- 定时任务活动结束 时间间隔：1小时 -->
+    <select id="selectPromotionEnd" resultType="com.topaiebiz.promotion.mgmt.dto.PromotionDto">
+		SELECT id FROM t_pro_promotion
+		WHERE deletedFlag = 0 AND endTime &lt;= NOW() AND marketState !=4 AND
+		marketState = 2 AND  subType IS NULL ;
+	</select>
+    <!-- 定时任务报名开始 时间间隔：1小时 -->
+    <select id="selectPromotionApplyStart" resultType="com.topaiebiz.promotion.mgmt.dto.PromotionDto">
+		SELECT id FROM t_pro_promotion
+		WHERE deletedFlag = 0 AND applyStartTime &lt;= NOW() AND applyEndTime > NOW() AND
+		marketState !=4 AND marketState = 1 AND state = 0
+	</select>
+    <!-- 定时任务报名结束 时间间隔：1小时 -->
+    <select id="selectPromotionApplyEnd" resultType="com.topaiebiz.promotion.mgmt.dto.PromotionDto">
+		SELECT id FROM t_pro_promotion
+		WHERE deletedFlag = 0 AND applyEndTime &lt;= NOW() AND state = 1
+	</select>
+
+    <!-- 平台报名活动列表 -->
+    <select id="selectPlatformEnrolPromotionList" resultType="com.topaiebiz.promotion.mgmt.dto.PromotionDto">
+        SELECT
+        p.id,
+        p.marketState,
+        p.applyTitle,
+        p.applyStartTime,
+        p.applyEndTime,
+        p.storeGrade,
+        p.typeId,
+        p.NAME,
+        p.startTime,
+        p.endTime,
+        p.state,
+        (SELECT COUNT(e.id) FROM t_pro_promotion_entry e WHERE e.promotionId = p.id AND e.deletedFlag = 0) AS
+        storeEnrolNum,
+        (SELECT COUNT(e.id) FROM t_pro_promotion_entry e WHERE e.promotionId = p.id AND e.deletedFlag = 0 AND e.state !=
+        0) AS auditStoreNum
+        FROM
+        t_pro_promotion p
+        WHERE p.deletedFlag = 0
+        AND p.marketState > 0
+        AND p.state > 0
+        <if test="!(name==null or name=='')">
+            AND p.name like CONCAT('%', #{name}, '%')
+        </if>
+        <if test="marketState !=null">
+            AND p.marketState = #{marketState}
+        </if>
+        <if test="!(startTime==null or startTime=='')">
+            AND p.startTime >= STR_TO_DATE(#{startTime},'%Y-%m-%d %H:%i:%s')
+        </if>
+        <if test="!(endTime==null or endTime=='')">
+            AND p.endTime &lt;= STR_TO_DATE(#{endTime},'%Y-%m-%d %H:%i:%s')
+        </if>
+        ORDER BY p.lastModifiedTime DESC
+    </select>
+
+    <!-- 发起报名获取活动列表 -->
+    <select id="selectEnrolPromotionList" resultType="com.topaiebiz.promotion.mgmt.dto.PromotionDto">
+        SELECT
+        id,
+        typeId,
+        NAME,
+        startTime,
+        endTime,
+        marketState
+        FROM t_pro_promotion
+        WHERE deletedFlag = 0
+        AND marketState = 1
+        AND typeId IN (4, 5, 6) AND state IS NULL
+        <if test="!(name==null or name=='')">
+            AND name like CONCAT('%', #{name}, '%')
+        </if>
+        <if test="!(typeId==null or typeId=='')">
+            AND typeId = #{typeId}
+        </if>
+    </select>
+
+    <!-- 商家营销活动报名列表(全部活动) -->
+    <select id="selectStoreAllPromotionList" resultType="com.topaiebiz.promotion.mgmt.dto.PromotionDto">
+        SELECT
+        p.id,
+        p.marketState,
+        p.applyTitle,
+        p.applyStartTime,
+        p.applyEndTime,
+        p.storeGrade,
+        p.typeId,
+        p.NAME,
+        p.startTime,
+        p.endTime,
+        p.state
+        FROM
+        t_pro_promotion p
+        LEFT JOIN t_pro_promotion_entry e ON e.promotionId = p.id
+        WHERE p.deletedFlag = 0
+        AND p.marketState > 0
+        AND p.state > 0 AND (e.storeId != #{storeId} OR e.storeId IS NULL)
+        <if test="!(name==null or name=='')">
+            AND p.name like CONCAT('%', #{name}, '%')
+        </if>
+        <if test="!(promotionEnrolStart==null or promotionEnrolStart=='')">
+            AND p.applyStartTime >= STR_TO_DATE(#{promotionEnrolStart},'%Y-%m-%d %H:%i:%s')
+        </if>
+        <if test="!(promotionEnrolEnd==null or promotionEnrolEnd=='')">
+            AND p.applyEndTime &lt;= STR_TO_DATE(#{promotionEnrolEnd},'%Y-%m-%d %H:%i:%s')
+        </if>
+        <if test="!(applyTitle==null or applyTitle=='')">
+            AND p.applyTitle = #{applyTitle}
+        </if>
+        <if test="marketState !=null">
+            AND p.marketState = #{marketState}
+        </if>
+    </select>
+
+    <!-- 商家营销活动报名列表(已报名活动) -->
+    <select id="selectStoreEnrolPromotionList" resultType="com.topaiebiz.promotion.mgmt.dto.PromotionDto">
+        SELECT
+        p.id,
+        p.marketState,
+        p.applyTitle,
+        p.applyStartTime,
+        p.applyEndTime,
+        p.storeGrade,
+        p.typeId,
+        p.NAME,
+        p.startTime,
+        p.endTime,
+        p.state,
+        e.state AS auditState,
+        e.storeId AS storeId
+        FROM
+        t_pro_promotion p
+        LEFT JOIN t_pro_promotion_entry e ON p.id = e.promotionId
+        WHERE p.deletedFlag = 0
+        AND p.marketState > 0
+        AND p.state > 0
+        <if test="!(name==null or name=='')">
+            AND p.name like CONCAT('%', #{name}, '%')
+        </if>
+        <if test="!(storeId==null or storeId=='')">
+            AND e.storeId = #{storeId}
+        </if>
+        <if test="!(promotionEnrolStart==null or promotionEnrolStart=='')">
+            AND p.applyStartTime >= STR_TO_DATE(#{promotionEnrolStart},'%Y-%m-%d %H:%i:%s')
+        </if>
+        <if test="!(promotionEnrolEnd==null or promotionEnrolEnd=='')">
+            AND p.applyEndTime &lt;= STR_TO_DATE(#{promotionEnrolEnd},'%Y-%m-%d %H:%i:%s')
+        </if>
+        <if test="!(applyTitle==null or applyTitle=='')">
+            AND p.applyTitle = #{applyTitle}
+        </if>
+        <if test="marketState !=null">
+            AND p.marketState = #{marketState}
+        </if>
+    </select>
+
+    <!-- 会员优惠券 -->
+    <select id="selectMemberCoupon" resultType="com.topaiebiz.promotion.mgmt.dto.PromotionDto">
+        SELECT
+        p.id,
+        p.name,
+        p.condType,
+        p.condValue,
+        p.discountValue,
+        p.startTime,
+        p.endTime,
+        p.description
+        FROM t_pro_promotion p LEFT JOIN t_pro_member_coupon c
+        ON p.id = c.couponId WHERE c.deletedFlag = 0 AND p.deletedFlag = 0
+        <if test="!(memberId==null or memberId=='')">
+            AND c.memberId = #{memberId}
+        </if>
+        <if test="usageState==0">
+            AND c.usageState = #{usageState} AND ((p.marketState in (2,4,6) AND p.endTime > NOW())
+            or (p.marketState =1 AND p.endTime > NOW() and typeId = 4 and subType in (0,1,2)))
+        </if>
+        <if test="usageState==1">
+            AND c.usageState = #{usageState}
+        </if>
+    </select>
+
+    <!-- 已过期优惠券 -->
+    <select id="selectOverdueCoupons" resultType="com.topaiebiz.promotion.mgmt.dto.PromotionDto">
+        SELECT
+        p.id,
+        p.name,
+        p.condType,
+        p.condValue,
+        p.discountValue,
+        p.startTime,
+        p.endTime,
+        p.description
+        FROM t_pro_promotion p LEFT JOIN t_pro_member_coupon c
+        ON p.id = c.couponId WHERE c.deletedFlag = 0 AND p.deletedFlag = 0
+        AND c.usageState = 0 AND ((p.marketState in (2,4,6) AND NOW() > p.endTime)
+        or (p.marketState =1 AND NOW() > p.endTime  and typeId = 4 and subType in (0,1,2)))
+        <if test="!(memberId==null or memberId=='')">
+            AND c.memberId = #{memberId}
+        </if>
+
+
+    </select>
+
+    <!-- 选择优惠券列表获取-->
+    <select id="getPromotionCouponsList" resultType="com.topaiebiz.promotion.mgmt.dto.PromotionDto">
+        SELECT id,name,discountValue,createdTime FROM t_pro_promotion WHERE deletedFlag=0
+        AND typeId = 4
+        AND marketState = 1 <![CDATA[ and now() < endTime ]]>
+        <if test="!(promotionIdList ==null)">
+            AND id NOT IN
+            <foreach collection="promotionIdList" item="id"
+                     open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        </if>
+        <if test="!(subType==null or subType == '')">
+            AND subType = #{subType}
+        </if>
+        <if test="!(couponId==null or couponId=='')">
+            AND id=#{couponId}
+        </if>
+        <if test="!(name==null or name=='')">
+            AND name like CONCAT('%', #{name}, '%')
+        </if>
+        <if test="!(discountValue==null or discountValue=='')">
+            AND discountValue = #{discountValue}
+        </if>
+        <if test="!(createdStartTime==null or createdStartTime=='')">
+            <![CDATA[ and startTime > #{createdStartTime} ]]>
+        </if>
+        <if test="!(createdEndTime==null or createdEndTime=='')">
+            <![CDATA[ and endTime < #{createdEndTime} ]]>
+        </if>
+        ORDER BY createdTime DESC
+    </select>
+
+    <select id="getCouponActives" resultType="com.topaiebiz.promotion.mgmt.dto.PromotionDto">
+        SELECT id,name,subType,createdTime,startTime,endTime,amount,usedAmount,marketState
+        from t_pro_promotion where deletedFlag = 0 AND typeId = 11
+        <if test="!(name==null or name=='')">
+            AND name like CONCAT('%', #{name}, '%')
+        </if>
+        <if test="!(createdStartTime==null or createdStartTime=='')">
+            <![CDATA[ and  createdTime > #{createdStartTime} ]]>
+        </if>
+        <if test="!(createdEndTime==null or createdEndTime=='')">
+            <![CDATA[ and createdTime < #{createdEndTime} ]]>
+        </if>
+        <if test="!(subType==null)">
+            and subType = #{subType}
+        </if>
+        <if test="!(marketState==null)">
+            <if test="marketState == 0 or marketState == 4 or marketState == 5">
+                and  marketState = #{marketState}
+            </if>
+            <if test="marketState == 1">
+                and (marketState = 6  <![CDATA[ and now() < startTime ]]>)
+            </if>
+            <if test="marketState == 2">
+                and  (marketState = 6  <![CDATA[ and now() > startTime ]]> <![CDATA[ and now() < endTime ]]>)
+            </if>
+            <if test="marketState == 3">
+                and  ( marketState = 6  <![CDATA[ and now() > endTime ]]>)
+            </if>
+        </if>
+        ORDER BY createdTime DESC
+    </select>
+
+    <select id="selectCouponsList" resultType="com.topaiebiz.promotion.mgmt.entity.PromotionEntity">
+        SELECT *
+        from t_pro_promotion where deletedFlag = 0 AND typeId = 7
+        <if test="!(storeId==null or storeId=='')">
+            AND sponsorType = #{storeId}
+        </if>
+        and marketState=2
+        ORDER BY createdTime DESC
+    </select>
+
+    <select id="selectReleaseList" resultType="com.topaiebiz.promotion.mgmt.entity.PromotionEntity">
+        SELECT * FROM  t_pro_promotion WHERE  deletedFlag = 0 and typeId = 11 and subType = 1 and marketState = 6 AND <![CDATA[  now() > startTime ]]> and <![CDATA[ now() < endTime ]]>
+        and (( <![CDATA[ #{startTime} < endTime ]]> and <![CDATA[ #{endTime} > endTime ]]>  )
+        OR ( <![CDATA[ #{endTime} > startTime ]]>  AND  <![CDATA[ #{startTime} < startTime ]]>))
+    </select>
+
+    <update id="updateUsedAmountById">
+        UPDATE t_pro_promotion
+        SET usedAmount = usedAmount + #{number}
+        WHERE id = #{id}
+        <![CDATA[
+            and usedAmount + #{number} <= amount
+        ]]>
+    </update>
+</mapper>

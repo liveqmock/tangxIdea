@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.topaiebiz.promotion.mgmt.dao.PromotionCouponConfigDao">
+
+    <select id="getSelectedCoupons" resultType="com.topaiebiz.promotion.mgmt.dto.PromotionDto">
+        select
+        b.id,b.name,b.discountValue,b.condValue,b.createdTime,b.startTime,b.endTime,a.totalNum,a.isReleaseData,a.remainderNum,a.amount,a.remainderAmount
+        FROM t_pro_promotion_coupon_config a
+        LEFT JOIN t_pro_promotion b ON a.couponPromotionId=b.id
+        where  a.deletedFlag = 0 AND a.promotionId = #{id}
+        <if test="!(couponId==null or couponId=='')">
+            AND b.id=#{couponId}
+        </if>
+        <if test="!(name==null or name=='')">
+            AND b.name like CONCAT('%', #{name}, '%')
+        </if>
+        <if test="!(discountValue==null or discountValue=='')">
+            AND b.discountValue = #{discountValue}
+        </if>
+        <if test="!(createdStartTime==null or createdStartTime=='')">
+            <![CDATA[ and b.startTime > #{createdStartTime} ]]>
+        </if>
+        <if test="!(createdEndTime==null or createdEndTime=='')">
+            <![CDATA[ and b.endTime < #{createdEndTime} ]]>
+        </if>
+    </select>
+
+    <update id="updateRemainderNumById">
+        UPDATE t_pro_promotion_coupon_config SET remainderNum = remainderNum - #{number} WHERE id = #{id} and remainderNum >= #{number}
+    </update>
+</mapper>

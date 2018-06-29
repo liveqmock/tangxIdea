@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.topaiebiz.trade.order.dao.OrderDao">
+
+    <select id="queryOrders" resultType="com.topaiebiz.transaction.order.merchant.entity.OrderEntity">
+        SELECT
+        tto.id,
+        tto.memberId,
+        tto.memberName,
+        tto.storeId,
+        tto.storeName,
+        tto.payId,
+        tto.orderTime,
+        tto.orderState,
+        tto.invoiceState,
+        tto.refundState,
+        tto.lockState,
+        tto.deliveryType,
+        tto.goodsTotal,
+        tto.freightTotal,
+        tto.freightPromotionId,
+        tto.actualFreight,
+        tto.orderTotal,
+        tto.storePromotionId,
+        tto.storeDiscount,
+        tto.platformPromotionId,
+        tto.platformDiscount,
+        tto.discountTotal,
+        tto.payPrice,
+        tto.payTime,
+        tto.payType,
+        tto.receiveTime,
+        tto.shipmentTime,
+        tto.scoreNum,
+        tto.balance,
+        tto.cardPrice,
+        tto.cardDetail,
+        tto.memo,
+        tto.creatorId,
+        tto.createdTime,
+        tto.lastModifierId,
+        tto.lastModifiedTime,
+        tto.deletedFlag,
+        tto.version
+        FROM t_tsa_order AS tto
+        <if test="null != goodName and goodName != ''">
+            LEFT JOIN t_tsa_order_detail AS ttod ON ttod.orderId = tto.id
+        </if>
+        WHERE 1 = 1
+        <if test="null != orderId">
+            AND tto.id = #{orderId}
+        </if>
+        <if test="null != memberPhone and memberPhone != ''">
+            AND tto.memberTelephone = #{memberPhone}
+        </if>
+        <if test="null != orderState">
+            AND tto.orderState = #{orderState}
+        </if>
+        <if test="null != storeId">
+            AND tto.storeId = #{storeId}
+        </if>
+        <if test="null != storeName and storeName != ''">
+            AND locate(#{storeName}, tto.storeName) > 0
+        </if>
+        <if test="null != goodName and goodName != ''">
+            AND locate(#{goodName}, ttod.name) > 0
+        </if>
+        <if test="null != orderTime">
+            AND to_days(tto.orderTime) = to_days(#{orderTime})
+        </if>
+        <if test="null != startTime">
+            AND tto.orderTime &gt; #{startTime}
+        </if>
+        <if test="null != endTime">
+            AND tto.orderTime &lt; #{endTime}
+        </if>
+
+        <if test="null != orderPrice">
+            AND tto.payPrice = #{orderPrice}
+        </if>
+        ORDER BY tto.orderTime DESC
+    </select>
+
+    <!-- 商家端 订单列表 -->
+    <select id="queryStoreOrders" resultType="com.topaiebiz.transaction.order.merchant.entity.OrderEntity">
+        SELECT
+        tto.id,
+        tto.memberId,
+        tto.memberName,
+        tto.storeId,
+        tto.storeName,
+        tto.payId,
+        tto.orderTime,
+        tto.orderState,
+        tto.invoiceState,
+        tto.refundState,
+        tto.lockState,
+        tto.deliveryType,
+        tto.goodsTotal,
+        tto.freightTotal,
+        tto.freightPromotionId,
+        tto.actualFreight,
+        tto.orderTotal,
+        tto.storePromotionId,
+        tto.storeDiscount,
+        tto.platformPromotionId,
+        tto.platformDiscount,
+        tto.discountTotal,
+        tto.payPrice,
+        tto.payTime,
+        tto.payType,
+        tto.receiveTime,
+        tto.shipmentTime,
+        tto.scoreNum,
+        tto.balance,
+        tto.cardPrice,
+        tto.cardDetail,
+        tto.memo,
+        tto.creatorId,
+        tto.createdTime,
+        tto.lastModifierId,
+        tto.lastModifiedTime,
+        tto.deletedFlag,
+        tto.version
+        FROM t_tsa_order AS tto
+        <if test="null != goodsName and '' != goodsName">
+            LEFT JOIN t_tsa_order_detail AS ttod ON ttod.orderId = tto.id
+        </if>
+        WHERE tto.storeId = #{storeId}
+        <if test="null != orderId">
+            AND tto.id = #{orderId}
+        </if>
+        <if test="null != payId">
+            AND tto.payId = #{payId}
+        </if>
+        <if test="null != goodsName and '' != goodsName">
+            AND locate(#{goodsName}, ttod.name) > 0
+        </if>
+        <if test="null != memberName and '' != memberName">
+            AND locate(#{memberName}, tto.memberName) > 0
+        </if>
+        <if test="null != memberPhone and '' != memberPhone">
+            AND tto.memberTelephone = #{memberPhone}
+        </if>
+        <if test="null != orderCreateTimeStart and null != orderCreateTimeEnd">
+            AND tto.orderTime &gt; #{orderCreateTimeStart} AND tto.orderTime &lt; #{orderCreateTimeEnd}
+        </if>
+        <if test="null != orderCompleteTimeStart and null != orderCompleteTimeEnd">
+            AND tto.completeTime &gt; #{orderCompleteTimeStart} AND tto.completeTime &lt; #{orderCompleteTimeEnd}
+        </if>
+        <if test="null != orderState">
+            AND tto.orderState = #{orderState}
+        </if>
+        ORDER BY tto.orderTime DESC
+    </select>
+
+
+    <select id="queryTodayOrderGroupMember"
+            resultType="com.topaiebiz.trade.order.dto.store.statistics.MemberOrderCountDTO">
+        SELECT
+        tto.memberId AS memberId,
+        COUNT(id) AS orderCount,
+        SUM(orderTotal) AS orderTotalAmount
+        FROM t_tsa_order AS tto
+        WHERE TO_DAYS(tto.orderTime) = TO_DAYS(NOW())
+        <if test="storeId != null">
+            AND tto.storeId = #{storeId}
+        </if>
+        GROUP BY memberId;
+    </select>
+
+
+    <!-- 获取日常订单数据 -->
+    <select id="queryDailyDate" resultType="com.topaiebiz.trade.order.dto.store.statistics.ExportDailyDataDTO">
+        select
+        o.orderTime as orderTime,
+        o.id as orderId,
+        c1.name as thirdCategory,
+        c2.name as secondCategory,
+        c3.name as firstCategory,
+        o.memberId as memberId,
+        o.storeName as storeName,
+        o.orderState as orderState,
+        o.memberTelephone as memberTelephone,
+        d.skuId as goodsSkuId,
+        d.itemId as goodsItemId,
+        d.name as goodsName,
+        d.goodsPrice as goodsPrice,
+        d.goodsNum as goodsNum,
+        o.orderTotal as orderTotal,
+        o.platformDiscount as platformDiscount,
+        o.storeDiscount as storeDiscount,
+        o.balance as balance,
+        o.cardPrice as cardPrice,
+        o.score as score,
+        o.payPrice as payPrice
+        from
+        t_tsa_order o JOIN t_tsa_order_detail d on o.id = d.orderId
+        JOIN t_goo_item i on i.id = d.itemId
+        JOIN t_goo_backend_category c1 on i.belongCategory = c1.id
+        LEFT JOIN t_goo_backend_category c2 ON c1.parentId = c2.id
+        LEFT JOIN t_goo_backend_category c3 ON c2.parentId = c3.id
+        where
+        DATEDIFF(NOW(), o.orderTime) = #{days}
+        and o.storeId <![CDATA[<>]]>'304'
+        ORDER BY o.createdTime;
+    </select>
+
+
+</mapper>

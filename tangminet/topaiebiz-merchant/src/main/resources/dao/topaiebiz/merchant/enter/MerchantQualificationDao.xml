@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.topaiebiz.merchant.enter.dao.MerchantQualificationDao">
+
+    <!-- 联系人手机号进行重复验证 -->
+    <select id="selectMerchantQualificationBycontactTele"
+            resultType="com.topaiebiz.merchant.enter.dto.MerchantQualificationDto">
+		SELECT id,contactTele FROM t_mer_merchant_qualification
+		WHERE
+		contactTele = #{contactTele}
+		AND deletedFlag =
+		0;
+	</select>
+
+    <!-- 商家资质列表分页检索 -->
+    <select id="selectMerchantQualificationList"
+            resultType="com.topaiebiz.merchant.enter.dto.MerchantQualificationDto">
+        SELECT
+        a.id AS merchantId,a.merchantType,b.name AS merchantName,b.districtId,tsd.serialName ,
+        b.address,b.telephone,b.capital,b.contactName,b.contactTele,a.state,b.licenseNo,a.name,a.name,a.createdTime,b.examineAuditor,b.examineTime
+        FROM t_mer_merchant_info a INNER JOIN t_mer_merchant_qualification b
+        LEFT JOIN t_sys_district AS tsd ON tsd.id = b.districtId
+        WHERE
+        a.id=b.merchantId and a.state != 0
+
+        <if test="!(merchantName==null or merchantName == '')">
+            AND b.name like CONCAT('%', #{merchantName}, '%')
+        </if>
+        <if test="!(state==null or state=='')">
+            AND a.state = #{state}
+        </if>
+        <if test="!(merchantId==null or merchantId=='')">
+            AND a.id = #{merchantId}
+        </if>
+        <if test="beginCreateTime!=null and beginCreateTime!='' ">
+			AND
+			date_format(a.createdTime, '%Y-%m-%d')&gt;= #{beginCreateTime}
+        </if>
+        <if test="createdTime!=null and createdTime!=''">
+			AND
+			date_format(a.createdTime, '%Y-%m-%d')&lt;= #{createdTime}
+        </if>
+
+		<if test="beginExamineTime!=null and beginExamineTime!='' ">
+			AND
+			date_format(b.examineTime, '%Y-%m-%d')&gt;= #{beginExamineTime}
+		</if>
+		<if test="examineTime!=null and examineTime!=''">
+			AND
+			date_format(b.examineTime, '%Y-%m-%d')&lt;= #{examineTime}
+		</if>
+
+        <if test="!(contactName==null or contactName == '')">
+            AND b.contactName like CONCAT('%', #{contactName}, '%')
+        </if>
+        <if test="!(contactTele==null or contactTele=='')">
+            AND b.`contactTele` like CONCAT('%', #{contactTele}, '%')
+        </if>
+        ORDER BY a.createdTime DESC
+    </select>
+
+    <!-- 商家入驻审核信息（商家资质信息数据回显） -->
+    <select id="selectMerchantQualificationListById"
+            resultType="com.topaiebiz.merchant.enter.dto.MerchantQualificationDto">
+		SELECT
+		a.`id`,b.`merchantId`,
+		b.`name`,b.`districtId`,b.`address`,b.`telephone`,
+		b.`staffNo`,b.`capital`,b.`contactTele`,b.`idCard`,b.`email`,b.`idCardImage`,
+		b.`licenseNo`,b.`licenseImage`,b.`licenseLocation`,b.`licenseBegin`,b.`licenseEnd`,
+		b.`manageScope`,b.`organCode`,b.`taxpayerNo`,b.`taxpayerImage`,c.`name`,c.`storeTele`,b.`paymentPrice`,b.`payImage`,
+		d.`accountName`,d.`account`,d.`accountDistrictId`,d.`bankNum`,d.`bankName`,d.`electronicImage`,b.`storeNumber`,a.`merchantType`
+		FROM t_mer_merchant_info a INNER JOIN t_mer_merchant_qualification b
+		ON a.`id`=b.`merchantId` INNER JOIN t_mer_store_info c ON
+		a.`id`=c.`merchantId` INNER JOIN t_mer_merchant_account d ON
+		a.`id`=d.`merchantId`
+		WHERE a.`id` = #{id}  and d.deletedFlag=0
+	</select>
+
+    <!-- 查询各表对应的merchantId -->
+    <select id="selectQualificationIdByMerchantId" parameterType="java.lang.Long"
+            resultType="java.lang.Long">
+		SELECT merchantId FROM
+		t_mer_merchant_qualification
+		WHERE id
+		= #{qualificationId}
+	</select>
+
+    <!-- 根据商家id修改商家（店铺类型）merchantType。 -->
+    <update id="updateMerchantInfoByMerchantType">
+		UPDATE t_mer_merchant_info SET merchantType =
+		#{merchantType}
+		WHERE
+		id =
+		#{merchantId}
+		AND
+		deletedFlag = 0
+	</update>
+
+    <!-- 根据loginName回显商家的错误提交信息 (公司及联系人信息) -->
+    <select id="selectMerchantInfoByLoginName"
+            resultType="com.topaiebiz.merchant.enter.dto.MerchantBasicInfoDto">
+		SELECT
+		c.`id`,c.`name`,c.`districtId`,c.`address`,c.`storeNumber`,c.`telephone`,c.`staffNo`,c.`capital`,c.`contactTele`,c.`idCard`,c.`email`,c.`idCardImage`,a.id AS merchantId,c.contactName
+		FROM t_mer_merchant_info a INNER JOIN t_mer_merchant_qualification c
+		ON a.`id`=c.`merchantId` WHERE a.`id` = #{merchantId}
+	</select>
+
+    <!-- 根据loginName回显商家的提交信息 (经营信息) -->
+    <select id="selectMercahntManageInfoByLoginName"
+            resultType="com.topaiebiz.merchant.enter.dto.MercahntManageInfoDto">
+		SELECT
+		a.`licenseNo`,a.`licenseImage`,a.licenseRegionId,a.`licenseLocation`,a.`licenseBegin`,a.`licenseEnd`,
+		a.`manageScope`,b.`accountName`,b.`account`,b.accountDistrictId AS accountDistrictId,b.`bankName`,b.`bankNum`,b.`electronicImage`,a.establishTime
+		FROM t_mer_merchant_qualification a INNER JOIN t_mer_merchant_account
+		b ON a.`merchantId`=b.`merchantId` WHERE a.`merchantId`=
+		#{merchantId} and b.deletedFlag=0
+	</select>
+
+    <!--  根据商家id查询商家基本信息-->
+    <select id="selectMerchantInfoByMerchantIds"
+            resultType="com.topaiebiz.merchant.enter.dto.MerchantBasicInfoDto">
+		select q.id,a.id AS merchantId, a.storeName,a.imgages,a.memo,q.districtId,q.address,q.contactName,q.contactTele,q.telephone,a.merchantGradeId,a.gradeIntegral,
+		a.merchantType,a.integral,a.settleCycle
+		 from t_mer_merchant_info a
+		LEFT JOIN t_mer_merchant_qualification q
+		on a.id =q.merchantId
+		where a.id=#{merchantId}
+	</select>
+
+
+    <!-- 根据用户名查出商家资质信息 -->
+    <select id="selectMerchantInfoByMerchantId"
+            resultType="com.topaiebiz.merchant.info.entity.MerchantQualificationEntity">
+		SELECT * FROM t_mer_merchant_qualification WHERE merchantId = #{belongId}
+
+	</select>
+
+
+    <select id="selectMerchantInfoByMemberId"
+            resultType="com.topaiebiz.merchant.info.entity.MerchantQualificationEntity">
+		SELECT * FROM t_mer_merchant_qualification WHERE memberId = #{memberId}
+
+	</select>
+
+    <!-- 商家基本信息回显 -->
+    <select id="selectMerchantBasicInfOById" resultType="com.topaiebiz.merchant.enter.dto.MerchantbasicInfo">
+		SELECT
+		a.id,b.merchantId,b.name,b.districtId,b.address,b.storeNumber,
+		b.telephone,b.staffNo,b.capital,b.contactTele,b.idCard,
+		b.email,b.idCardImage,b.licenseNo,
+		b.licenseLocation,b.licenseBegin,b.licenseEnd
+		,b.manageScope,b.licenseImage,c.accountName,c.account,c.accountDistrictId AS accountDistrictId,
+		c.bankNum,c.bankName,b.licenseRegionId,c.electronicImage,a.settleCycle,a.contactTele,b.contactName,b.establishTime
+		FROM t_mer_merchant_info a INNER JOIN
+		t_mer_merchant_qualification b ON
+		a.id=b.merchantId INNER JOIN
+		t_mer_merchant_account c
+		ON a.id=c.`merchantId` WHERE a.id =#{id} and c.deletedFlag=0
+	</select>
+
+    <!-- 经营类目信息回显 -->
+    <select id="selectMerchantManageInfoById" resultType="com.topaiebiz.merchant.enter.dto.MerchantManageDto">
+		SELECT * FROM t_mer_merchant_info  WHERE id = #{id}
+	</select>
+
+    <!-- 费用信息回显 -->
+    <select id="selectCostInfoById" resultType="com.topaiebiz.merchant.enter.dto.CostInfoDto">
+		SELECT
+		a.`id`,b.`paymentPrice`,b.`payImage`,b.`memo` FROM t_mer_merchant_info
+		a INNER
+		JOIN t_mer_merchant_qualification b ON a.`id`= b.`merchantId`
+		WHERE
+		a.`id`= #{id}
+	</select>
+
+
+</mapper>

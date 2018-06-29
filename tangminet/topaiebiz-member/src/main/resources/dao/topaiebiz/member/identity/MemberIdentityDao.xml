@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.topaiebiz.member.identity.dao.MemberIdentityDao">
+
+
+	<select id="selectMemberIdentityList" resultType="com.topaiebiz.member.identity.dto.MemberIdentityDto">
+		select i.id AS memberId,m.nickName AS userName,m.telephone,i.createdTime,i.auditTime,i.status,i.id AS identityId
+		FROM t_mem_member_identity i LEFT JOIN t_mem_member m ON i.memberId =m.id WHERE i.deletedFlag=0
+		<if test="!(memberId==null or memberId=='')">
+			AND i.id= #{memberId}
+		</if>
+
+		<if test="!(telephone==null or telephone=='')">
+			AND m.telephone= #{telephone}
+		</if>
+
+		<if test="!(status==null or status=='')">
+			AND i.status= #{status}
+		</if>
+
+		<if test="!(userName==null or userName == '')">
+			AND m.nickName like CONCAT('%', #{userName}, '%')
+		</if>
+		ORDER BY i.createdTime DESC
+	</select>
+</mapper>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.topaiebiz.dec.dao.TemplateModuleDao">
+
+	<!-- 逻辑删除单条区域数据  -->
+<!--	<delete id="deleteTemeplateModule">
+		UPDATE t_dec_temeplate_module SET deletedFlag = 1
+		WHERE id =
+		#{temeplateModuleId}
+	</delete>-->
+
+	<insert id="insertBatch" parameterType="java.util.List">
+		INSERT INTO t_dec_template_module
+		(id,infoId,parentId,title,iconImage,memo,creatorId,createdTime,
+		lastModifierId,lastModifiedTime,deletedFlag,version,decType)
+		VALUES
+		<foreach collection="list" item="item" index="index" separator="," >
+			(#{item.id},#{item.infoId},#{item.parentId},#{item.title},
+			#{item.iconImage},#{item.memo},#{item.creatorId},#{item.createdTime},
+			#{item.lastModifierId},#{item.lastModifiedTime},#{item.deletedFlag},#{item.version},
+			#{item.decType})
+		</foreach>
+	</insert>
+</mapper>

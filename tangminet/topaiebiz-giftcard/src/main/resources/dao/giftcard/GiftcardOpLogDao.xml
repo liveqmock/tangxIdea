@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.topaiebiz.giftcard.dao.GiftcardOpLogDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.topaiebiz.giftcard.entity.GiftcardOpLog">
+        <id column="id" property="id" />
+        <result column="bizId" property="bizId" />
+        <result column="note" property="note" />
+        <result column="opSrc" property="opSrc" />
+        <result column="opType" property="opType" />
+        <result column="operator" property="operator" />
+        <result column="opTime" property="opTime" />
+    </resultMap>
+
+</mapper>

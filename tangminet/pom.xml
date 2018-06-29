@@ -1,0 +1,570 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <!-- 表示当前项目采用的POM模型版本是4.0.0。 -->
+    <modelVersion>4.0.0</modelVersion>
+
+    <!--topaiebiz-parent项目的基础信息。 -->
+    <groupId>com.topaiebiz</groupId>
+    <artifactId>topaiebiz-parent</artifactId>
+    <version>2.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>topaiebiz-parent</name>
+
+    <!-- 定义的一些常用的常量属性，以便于topaiebiz-parent项目及其子项目或应用模块中直接引用。 -->
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <java.version>1.8</java.version>
+
+        <!-- Apache的Maven编译插件库的版本号。 -->
+        <maven-compiler-plugin.version>3.7.0</maven-compiler-plugin.version>
+        <!-- Apache的Maven发布插件库的版本号。 -->
+        <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
+        <spring-boot-plugin.version>1.4.3.RELEASE</spring-boot-plugin.version>
+
+        <!-- 以下为Topaiebiz智能电子商务平台依赖的一些三方库的版本号。 在topaiebiz-parent中集中进行管理，以便于后续依赖库升级。 -->
+        <!-- Nebula PaaS软件快速研发平台SSM基础框架的快速启动器依赖库的版本号。 -->
+        <nebula-paas-ssmyb-sysmgt.version>1.2.18</nebula-paas-ssmyb-sysmgt.version>
+        <!-- MySQL JDBC驱动依赖库的版本号。 -->
+        <mysql-connector-java.version>5.1.43</mysql-connector-java.version>
+        <mybaits-plus.version>2.1.5</mybaits-plus.version>
+        <spring.version>4.3.12.RELEASE</spring.version>
+        <lombok.version>1.16.12</lombok.version>
+        <javax-servlet-api.version>2.5</javax-servlet-api.version>
+        <hibernate-validation.version>5.3.5.Final</hibernate-validation.version>
+        <guava.version>16.0.1</guava.version>
+        <commons-collections>3.1</commons-collections>
+        <commons-beanutil.version>1.9.2</commons-beanutil.version>
+        <jedis.version>2.9.0</jedis.version>
+        <aspectjweaver.version>1.8.9</aspectjweaver.version>
+        <fastjson.version>1.2.24</fastjson.version>
+        <commons-lang.version>3.7</commons-lang.version>
+        <sharding-jdbc.version>2.0.0</sharding-jdbc.version>
+        <druid.version>1.1.5</druid.version>
+        <!-- log4j -->
+        <slf4j-api.version>1.7.21</slf4j-api.version>
+        <log4j.version>2.10.0</log4j.version>
+        <!-- Apache commons-collection4 -->
+        <commons-collection.version>4.1</commons-collection.version>
+        <httpcomponents.version>4.5.2</httpcomponents.version>
+        <!-- JavaBean的映射工具 -->
+        <dozer.version>5.5.1</dozer.version>
+        <poi.version>3.12</poi.version>
+        <poi-ooxml.version>3.12</poi-ooxml.version>
+        <disruptor.version>3.3.4</disruptor.version>
+        <io.version>2.6</io.version>
+        <finalName>motherbuy</finalName>
+    </properties>
+
+    <!-- topaiebiz-parent项目的依赖库管理列表。目的是集中管理其子项目或模块的依赖，子项目或模块在引用此列表中的依赖时，仅需声明依赖的
+        groupId和artifactId即可，version不用再度声明，因为它会自动被继承。 -->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.nebulapaas</groupId>
+                <artifactId>nebula-paas-ssmyb-sysmgt</artifactId>
+                <version>${nebula-paas-ssmyb-sysmgt.version}</version>
+                <exclusions>
+                    <!--
+                    <exclusion>
+                        <groupId>com.alibaba</groupId>
+                        <artifactId>druid-spring-boot-starter</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>jul-to-slf4j</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>log4j-over-slf4j</artifactId>
+                    </exclusion>
+                    -->
+                    <exclusion>
+                        <groupId>ch.qos.logback</groupId>
+                        <artifactId>logback-classic</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>${mysql-connector-java.version}</version>
+            </dependency>
+            <!-- topaiebiz智能电子商务平台各子模块的的依赖 -->
+            <dependency>
+                <groupId>com.topaiebiz</groupId>
+                <artifactId>topaiebiz-system</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.topaiebiz</groupId>
+                <artifactId>topaiebiz-goods</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.topaiebiz</groupId>
+                <artifactId>topaiebiz-member</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.topaiebiz</groupId>
+                <artifactId>topaiebiz-merchant</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.topaiebiz</groupId>
+                <artifactId>topaiebiz-giftcard</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.topaiebiz</groupId>
+                <artifactId>topaiebiz-transaction</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.topaiebiz</groupId>
+                <artifactId>topaiebiz-promotion</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.topaiebiz</groupId>
+                <artifactId>topaiebiz-transport</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.topaiebiz</groupId>
+                <artifactId>topaiebiz-SMS</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.topaiebiz</groupId>
+                <artifactId>topaiebiz-decorate</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.topaiebiz</groupId>
+                <artifactId>topaiebiz-elasticsearch</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.topaiebiz</groupId>
+                <artifactId>topaiebiz-thirdparty-wechat</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.topaiebiz</groupId>
+                <artifactId>topaiebiz-settlement</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.topaiebiz</groupId>
+                <artifactId>topaiebiz-timetask</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.topaiebiz</groupId>
+                <artifactId>topaiebiz-file</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.topaiebiz</groupId>
+                <artifactId>topaiebiz-payment</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.topaiebiz</groupId>
+                <artifactId>topaiebiz-openapi</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.topaiebiz</groupId>
+                <artifactId>topaiebiz-guider</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <!-- lombok -->
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-validator</artifactId>
+                <version>${hibernate-validation.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.topaiebiz</groupId>
+                <artifactId>member-service-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.topaiebiz</groupId>
+                <artifactId>system-service-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.topaiebiz</groupId>
+                <artifactId>goods-service-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.topaiebiz</groupId>
+                <artifactId>trade-service-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.topaiebiz</groupId>
+                <artifactId>promotion-service-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.topaiebiz</groupId>
+                <artifactId>file-service-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.topaiebiz</groupId>
+                <artifactId>merchant-service-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.topaiebiz</groupId>
+                <artifactId>card-service-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.topaiebiz</groupId>
+                <artifactId>basic-service-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.topaiebiz</groupId>
+                <artifactId>sms-service-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.topaiebiz</groupId>
+                <artifactId>payment-service-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.topaiebiz</groupId>
+                <artifactId>transport-service-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.topaiebiz</groupId>
+                <artifactId>decorate-service-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.topaiebiz</groupId>
+                <artifactId>openapi-service-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.topaiebiz</groupId>
+                <artifactId>settlement-service-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.topaiebiz</groupId>
+                <artifactId>monitor-service-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.topaiebiz</groupId>
+                <artifactId>elasticsearch-service-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.topaiebiz</groupId>
+                <artifactId>topaiebiz-base-model</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.topaiebiz</groupId>
+                <artifactId>topaiebiz-common</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.topaiebiz</groupId>
+                <artifactId>topaiebiz-monitor</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus</artifactId>
+                <version>${mybaits-plus.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-web</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-webmvc</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-beans</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>servlet-api</artifactId>
+                <version>${javax-servlet-api.version}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-collections</groupId>
+                <artifactId>commons-collections</artifactId>
+                <version>${commons-collections}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-beanutils</groupId>
+                <artifactId>commons-beanutils</artifactId>
+                <version>${commons-beanutil.version}</version>
+            </dependency>
+            <!-- AspectJ-->
+            <dependency>
+                <groupId>org.aspectj</groupId>
+                <artifactId>aspectjweaver</artifactId>
+                <version>${aspectjweaver.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>redis.clients</groupId>
+                <artifactId>jedis</artifactId>
+                <version>${jedis.version}</version>
+            </dependency>
+            <!--FastJSON -->
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>fastjson</artifactId>
+                <version>${fastjson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${commons-lang.version}</version>
+            </dependency>
+            <!-- Apache commons-collections4 -->
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-collections4</artifactId>
+                <version>${commons-collection.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>fluent-hc</artifactId>
+                <version>${httpcomponents.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>druid</artifactId>
+                <version>${druid.version}</version>
+            </dependency>
+            <!-- SLF4J && Log4J -->
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j-api.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-slf4j-impl</artifactId>
+                <version>${log4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-api</artifactId>
+                <version>${log4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-core</artifactId>
+                <version>${log4j.version}</version>
+            </dependency>
+            <!-- JavaBean的映射工具 -->
+            <dependency>
+                <groupId>net.sf.dozer</groupId>
+                <artifactId>dozer</artifactId>
+                <version>${dozer.version}</version>
+            </dependency>
+            <!-- poi for excel -->
+            <dependency>
+                <groupId>org.apache.poi</groupId>
+                <artifactId>poi</artifactId>
+                <version>${poi.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.poi</groupId>
+                <artifactId>poi-ooxml</artifactId>
+                <version>${poi-ooxml.version}</version>
+            </dependency>
+            <!-- log4j2 异步Logger -->
+            <dependency>
+                <groupId>com.lmax</groupId>
+                <artifactId>disruptor</artifactId>
+                <version>${disruptor.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>${io.version}</version>
+            </dependency>
+
+            <dependency>
+               <groupId>io.shardingjdbc</groupId>
+               <artifactId>sharding-jdbc-core</artifactId>
+               <version>${sharding-jdbc.version}</version>
+              <exclusions>
+                   <exclusion>
+                       <groupId>org.yaml</groupId>
+                       <artifactId>snakeyaml</artifactId>
+                   </exclusion>
+               </exclusions>
+            </dependency>
+            <!-- 单元测试新增pom配置 -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-test</artifactId>
+                <version>1.5.2.RELEASE</version>
+                <scope>test</scope>
+            </dependency>
+        </dependencies>
+
+    </dependencyManagement>
+
+    <!-- topaiebiz-parent项目的子项目或模块列表。 -->
+    <modules>
+        <!-- Topaiebiz智能电子商务平台的子平台 - 会员管理平台。 -->
+        <module>topaiebiz-member</module>
+        <!-- Topaiebiz智能电子商务平台的子平台 - 商家管理平台。 -->
+        <module>topaiebiz-merchant</module>
+        <!-- Topaiebiz智能电子商务平台的子平台 - 商品管理平台。 -->
+        <module>topaiebiz-goods</module>
+        <!-- Topaiebiz智能电子商务平台的子平台 - 礼卡管理平台。 -->
+        <module>topaiebiz-giftcard</module>
+        <!-- Topaiebiz智能电子商务平台的子平台 - 营销管理平台。 -->
+        <module>topaiebiz-promotion</module>
+        <!-- Topaiebiz智能电子商务平台的子平台 - 交易管理平台。 -->
+        <module>topaiebiz-transaction</module>
+        <!-- Topaiebiz智能电子商务平台的子平台 - 运输管理平台。 -->
+        <module>topaiebiz-transport</module>
+        <!-- Topaiebiz智能电子商务平台的子平台 - 结算管理平台。 -->
+        <module>topaiebiz-settlement</module>
+        <!-- Topaiebiz智能电子商务平台的子平台 - 系统权限平台。 -->
+        <module>topaiebiz-system</module>
+        <!-- Topaiebiz智能电子商务平台的子平台 - 文件管理中心。 -->
+        <module>topaiebiz-file</module>
+        <!-- Topaiebiz智能电子商务平台的子平台 - 手机短信。 -->
+        <module>topaiebiz-SMS</module>
+        <!-- Topaiebiz智能电子商务平台的子平台 - 三方微信。 -->
+        <module>topaiebiz-thirdparty-wechat</module>
+        <!-- Topaiebiz智能电子商务平台的子平台 - es全局商品搜索。 -->
+        <module>topaiebiz-elasticsearch</module>
+        <!-- Topaiebiz智能电子商务平台的子平台 - 装修中心。 -->
+        <module>topaiebiz-decorate</module>
+        <!-- Topaiebiz智能电子商务平台的子平台 - 二维码 -->
+        <module>topaiebiz-thirdparty-qrcode</module>
+        <!-- Topaiebiz智能电子商务平台的子平台 - 定时任务 -->
+        <module>topaiebiz-timetask</module>
+        <!-- Topaiebiz智能电子商务平台的子平台 - 线上环境 -->
+        <module>topaiebiz-laucher</module>
+        <module>service-api</module>
+        <module>topaiebiz-base</module>
+        <module>topaiebiz-payment</module>
+        <module>topaiebiz-openapi</module>
+        <module>topaiebiz-monitor</module>
+        <module>topaiebiz-guider</module>
+    </modules>
+
+    <!-- topaiebiz-parent项目的构建配置信息。 -->
+    <build>
+        <plugins>
+            <!-- Spring Boot的构建插件配置信息。 -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${spring-boot-plugin.version}</version>
+            </plugin>
+            <!-- Maven Compiler插件配置信息。 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.6</version>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                    <useDefaultDelimiters>true</useDefaultDelimiters>
+                </configuration>
+            </plugin>
+            <!-- Maven Release插件配置信息。 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>${maven-release-plugin.version}</version>
+                <configuration>
+                    <!-- 自动同步更新子项目的版本。 -->
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                    <useReleaseProfile>false</useReleaseProfile>
+                    <!-- 在发布时不检查是否提交svn的文件过滤配置 -->
+                    <checkModificationExcludes>
+                        <checkModificationExclude>.project</checkModificationExclude>
+                        <checkModificationExclude>.settings</checkModificationExclude>
+                        <checkModificationExclude>.classpath</checkModificationExclude>
+                        <checkModificationExclude>.factorypath</checkModificationExclude>
+                        <checkModificationExclude>**\.factorypath</checkModificationExclude>
+                        <checkModificationExclude>**\.project</checkModificationExclude>
+                        <checkModificationExclude>**\.settings</checkModificationExclude>
+                        <checkModificationExclude>**\.classpath</checkModificationExclude>
+                    </checkModificationExcludes>
+                </configuration>
+            </plugin>
+        </plugins>
+        <defaultGoal>compile</defaultGoal>
+    </build>
+
+    <scm>
+        <url>http://nexus.motherbuy.com/content/repositories/releases/</url>
+        <developerConnection>scm:git:http://yangfeng@git.motherbuy.com/cloud-product/product-demo.git
+        </developerConnection>
+        <connection>scm:git:http://yangfeng@git.motherbuy.com/cloud-product/product-demo.git</connection>
+        <tag>HEAD</tag>
+    </scm>
+
+    <!-- nebula-paas-parent项目的Maven私服的分发配置信息。 -->
+    <distributionManagement>
+        <repository>
+            <id>motherbuy</id>
+            <name>motherbuy releases</name>
+            <url>http://nexus.motherbuy.com/content/repositories/releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>motherbuy</id>
+            <name>motherbuy snapshots</name>
+            <url>http://nexus.motherbuy.com/content/repositories/snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+</project>

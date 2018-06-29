@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.topaiebiz.merchant.store.dao.MerchantMmeberDao">
+
+    <!--根据和店铺id查询所有的会员-->
+    <select id="selectMerchantMemberByStoreId" resultType="Long">
+     SELECT  m.memberId FROM t_mem_merchant_member  m
+    WHERE m.storeId= #{storeId}
+    </select>
+    <!--查询关注表是否存在-->
+
+    <select id="selectMerchantMemberByStoreIdAndMember" resultType="com.topaiebiz.merchant.store.entity.MerchantMemberEntity">
+        SELECT  *  FROM t_mem_merchant_member  m
+        WHERE m.storeId= #{storeId} AND m.memberId=#{memberId}
+    </select>
+
+</mapper>

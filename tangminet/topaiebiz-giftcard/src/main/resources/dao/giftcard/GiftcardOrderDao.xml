@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.topaiebiz.giftcard.dao.GiftcardOrderDao">
+
+    <select id="queryOrders" resultType="com.topaiebiz.giftcard.entity.GiftcardOrder">
+        SELECT
+        tgo.id AS  id,
+        tgo.memberName AS memberName,
+        tgo.orderStatus AS orderStatus,
+        tgo.createdTime AS createdTime,
+        tgo.payTime AS payTime,
+        tgo.payAmount AS payAmount,
+        tgo.orderAmount AS orderAmount,
+        tgoi.faceValue AS faceValue,
+        tgoi.salePrice AS salePrice,
+        tgoi.cardNum AS  cardNum,
+        tgoi.cardName AS cardName,
+        tgoi.cover AS cover
+        FROM t_giftcard_order tgo
+        INNER JOIN t_giftcard_order_item tgoi
+        ON tgo.id=tgoi.orderId
+        WHERE delFlag=0
+        <if test="orderId !=null">
+            AND tgo.id=#{orderId}
+        </if>
+        <if test="memberId != null">
+            AND tgo.memberId=#{memberId}
+        </if>
+        <if test="memberName != null">
+            AND tgo.memberName LIKE concat("%",#{memberName},"%")
+        </if>
+        <if test="orderStatus != null">
+            AND tgo.orderStatus = #{orderStatus}
+        </if>
+        <if test="labelId != null">
+            AND tgoi.labelId = #{labelId}
+        </if>
+        <if test="payStart != null">
+            AND tgo.payTime &gt;= #{payStart}
+        </if>
+        <if  test=" payEnd != null">
+            AND tgo.payTime &lt;= #{payEnd}
+        </if>
+        <if test="orderStart != null">
+            AND tgo.createdTime &gt;= #{orderStart}
+        </if>
+        <if  test=" orderEnd != null">
+            AND tgo.createdTime &lt;= #{orderEnd}
+        </if>
+        ORDER BY tgo.createdTime DESC
+    </select>
+    <select id="queryOrderById" resultType="com.topaiebiz.giftcard.entity.GiftcardOrder">
+        SELECT
+        tgo.id AS  id,
+        tgo.memberName AS memberName,
+        tgo.memberId AS memberId,
+        tgo.memberPhone as memberPhone,
+        tgo.orderStatus AS orderStatus,
+        tgo.createdTime AS createdTime,
+        tgo.payTime AS payTime,
+        tgo.payAmount AS payAmount,
+        tgo.paySn AS paySn,
+        tgo.payCode AS  payCode,
+        tgo.orderAmount AS orderAmount,
+        tgoi.faceValue AS faceValue,
+        tgoi.salePrice AS salePrice,
+        tgoi.cardNum AS  cardNum,
+        tgoi.cardName AS cardName,
+        tgoi.cover AS cover,
+        tgoi.cardNoList AS cardNoList,
+        tgoi.batchId AS batchId
+        FROM t_giftcard_order tgo
+        INNER JOIN t_giftcard_order_item tgoi
+        ON tgo.id=tgoi.orderId
+        WHERE delFlag=0
+        AND tgo.id=#{orderId}
+
+    </select>
+    <select id="queryOrdersForExport" resultType="com.topaiebiz.giftcard.entity.GiftcardOrder">
+        SELECT
+        tgo.id AS  id,
+        tgo.memberName AS memberName,
+        tgo.memberPhone as memberPhone,
+        tgo.orderStatus AS orderStatus,
+        tgo.createdTime AS createdTime,
+        tgo.payTime AS payTime,
+        tgo.payAmount AS payAmount,
+        tgo.payCode AS payCode,
+        tgo.orderAmount AS orderAmount,
+        tgoi.faceValue AS faceValue,
+        tgoi.salePrice AS salePrice,
+        tgoi.cardNum AS  cardNum,
+        tgoi.batchId AS batchId,
+        tgoi.cardNoList AS cardNoList
+        FROM t_giftcard_order tgo
+        INNER JOIN t_giftcard_order_item tgoi
+        ON tgo.id=tgoi.orderId
+        WHERE delFlag=0
+        <if test="orderId !=null">
+            AND tgo.id=#{orderId}
+        </if>
+        <if test="memberId != null">
+            AND tgo.memberId=#{memberId}
+        </if>
+        <if test="memberName != null">
+            AND tgo.memberName LIKE concat("%",#{memberName},"%")
+        </if>
+        <if test="orderStatus != null">
+            AND tgo.orderStatus = #{orderStatus}
+        </if>
+        <if test="labelId != null">
+            AND tgoi.labelId = #{labelId}
+        </if>
+        <if test="payStart != null">
+            AND tgo.payTime &gt;= #{payStart}
+        </if>
+        <if  test=" payEnd != null">
+            AND tgo.payTime &lt;= #{payEnd}
+        </if>
+        <if test="orderStart != null">
+            AND tgo.createdTime &gt;= #{orderStart}
+        </if>
+        <if  test=" orderEnd != null">
+            AND tgo.createdTime &lt;= #{orderEnd}
+        </if>
+        ORDER BY tgo.createdTime DESC
+        LIMIT #{start},#{end}
+    </select>
+    <select id="queryValidOrderByMemberAndGiftcard" parameterType="com.topaiebiz.giftcard.entity.GiftcardOrder" resultType="java.lang.Integer">
+        select sum(oi.cardNum) from t_giftcard_order o
+        left  join  t_giftcard_order_item oi on o.id=oi.orderId
+        where o.delFlag=0 and o.memberId=#{memberId} and  o.orderStatus in (10,20) and oi.batchId=#{batchId}
+    </select>
+</mapper>

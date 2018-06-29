@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.topaiebiz.promotion.worldcup.dao.WorldCupMemberInvestmentDao" >
+
+    <select id="selectListByGroup" resultType="com.topaiebiz.promotion.worldcup.entity.WorldCupMemberInvestmentEntity">
+      SELECT * FROM t_pro_world_cup_member_investment_info where investmentType =1 and deletedFlag = 0 and matchId = #{matchId}
+      ORDER  BY createdTime limit #{start},#{end}
+    </select>
+
+</mapper>

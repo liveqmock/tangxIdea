@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.topaiebiz.merchant.store.dao.MerchantModifyInfoDao">
+
+    <!--查询重新审核列表-->
+    <select id="selectMerchantModifyInfoList" resultType="com.topaiebiz.merchant.store.dto.MerchantModifyInfosDto">
+        SELECT b.merchantId AS merchantId,d.id AS storeId, a.storeName AS storeName, a.name AS merchantName,
+        tsd.serialName,c.contactName,c.contactTele,
+        e.name AS gradeName,
+        a.gradeIntegral,a.changeState,a.merchantGradeId,b.createdTime,b.examineAuditor,b.examineTime,b.auditResult,b.id
+        AS modifyId
+        from t_mer_merchant_info a LEFT JOIN t_mer_merchant_qualification c ON a.id=c.merchantId LEFT JOIN
+        t_mer_store_info d
+        ON a.id=d.merchantId LEFT JOIN t_mer_merchant_grade e
+        ON e.id=a.merchantGradeId LEFT JOIN t_sys_district AS tsd ON tsd.id = c.districtId
+        LEFT JOIN t_mer_merchant_modify_log b ON b.merchantId=a.id
+        where b.deletedFlag = 0
+        <if test="!(storeId==null or storeId == '')">
+            AND d.id like CONCAT('%', #{storeId}, '%')
+        </if>
+
+        <if test="!(storeName==null or storeName == '')">
+            AND a.storeName like CONCAT('%', #{storeName}, '%')
+        </if>
+
+        <if test="!(merchantName==null or merchantName == '')">
+            AND a.name like CONCAT('%', #{merchantName}, '%')
+        </if>
+        <if test="!(contactName==null or contactName == '')">
+            AND c.contactName like CONCAT('%', #{contactName}, '%')
+        </if>
+
+        <if test="!(contactTele==null or contactTele == '')">
+            AND c.contactTele like CONCAT('%', #{contactTele}, '%')
+        </if>
+        <if test="beginCreatedTime!=null and beginCreatedTime!='' ">
+            AND
+            date_format(b.createdTime, '%Y-%m-%d')&gt;= #{beginCreatedTime}
+        </if>
+        <if test="createdTime!=null and createdTime!=''">
+            AND
+            date_format(b.createdTime, '%Y-%m-%d')&lt;= #{createdTime}
+        </if>
+        <if test="beginExamineTime!=null and beginExamineTime!='' ">
+            AND
+            date_format(b.examineTime, '%Y-%m-%d')&gt;= #{beginExamineTime}
+        </if>
+        <if test="examineTime!=null and examineTime!=''">
+            AND
+            date_format(b.examineTime, '%Y-%m-%d')&lt;= #{examineTime}
+        </if>
+        <if test="!(auditResult==null or auditResult=='')">
+            AND b.auditResult = #{auditResult}
+        </if>
+        <if test="!(merchantGradeId==null or merchantGradeId=='')">
+            AND a.merchantGradeId = #{merchantGradeId}
+        </if>
+        ORDER BY b.createdTime DESC
+    </select>
+
+
+    <select id="selectMerchantModifysInfoDeail" resultType="com.topaiebiz.merchant.store.dto.MerchantModifyLogDto">
+       SELECT b.merchantId,b.status,a.fieldName,a.modifiedValue,a.noPassReason,a.status AS modifyStatus from t_mer_merchant_modify_detail a
+      LEFT JOIN t_mer_merchant_modify_log b on b.id=a.modifyId
+     WHERE b.merchantId=#{merchantId} AND b.status =0 and a.deletedFlag=0 and a.status !=0
+
+    </select>
+
+
+</mapper>

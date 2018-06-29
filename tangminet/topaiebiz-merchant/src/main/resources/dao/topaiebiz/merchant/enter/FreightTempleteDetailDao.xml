@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.topaiebiz.merchant.freight.dao.FreightTempleteDetailDao">
+<select id="selectByFreightId" resultType="com.topaiebiz.merchant.freight.entity.FreightTempleteDetailEntity">
+  SELECT
+        `id`,
+        `freightId`,
+        `type`,
+        `districtIdList`,
+        `firstPrice`,
+        `firstNum`,
+        `addPrice`,
+        `addNum`,
+        `isDefault`,
+        `memo`,
+        `creatorId`,
+        `createdTime`,
+        `lastModifierId`,
+        `lastModifiedTime`,
+        `deletedFlag`,
+        `version`
+    FROM
+        t_mer_freight_templete_detail
+    WHERE freightId = #{freightId}
+</select>
+</mapper>

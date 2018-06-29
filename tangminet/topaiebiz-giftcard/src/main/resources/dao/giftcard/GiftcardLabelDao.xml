@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.topaiebiz.giftcard.dao.GiftcardLabelDao">
+    <select id="queryGiftcardLabel" resultType="com.topaiebiz.giftcard.entity.GiftcardLabel">
+        SELECT id,labelName,samplePic,remark
+        FROM t_giftcard_label WHERE delFlag=0
+        <if test="labelName != null">
+            AND labelName LIKE concat("%",#{labelName},"%")
+        </if>
+    </select>
+</mapper>

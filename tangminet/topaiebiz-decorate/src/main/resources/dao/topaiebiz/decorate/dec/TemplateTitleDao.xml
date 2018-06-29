@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.topaiebiz.dec.dao.TemplateTitleDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, moduleId, titleName, sortNo, memo, creatorId, createdTime, lastModifierId, lastModifiedTime, deletedFlag, version
+    </sql>
+
+
+	<!-- 逻辑删除单条区域数据  -->
+	<!--<delete id="deleteTemeplateTitle">
+		UPDATE t_dec_temeplate_title SET deletedFlag = 1
+		WHERE id =
+		#{temeplateTitleId}
+	</delete>-->
+   <!-- <update id="updateTemplateTitle" parameterType="java.util.Map">
+        UPDATE  t_dec_template_title SET
+        titleName = #{titleName},lastModifierId=#{lastModifierId},
+        lastModifiedTime=#{lastModifiedTime}
+        WHERE
+        moduleId=#{moduleId},sortNo=#{sortNo}
+    </update>
+
+    <update id="updateDeleteFlag" parameterType="java.util.Map">
+        UPDATE t_dec_template_title SET
+        deletedFlag=#{deletedFlag},lastModifierId=#{lastModifierId},
+        lastModifiedTime=#{lastModifiedTime}
+        WHERE
+        moduleId=#{moduleId} AND sortNo LIKE CONCAT('',#{sortNo},'%')
+    </update>
+
+    <select id="selectByModuleId" parameterType="java.util.Map">
+        SELECT
+        <include refid="Base_Column_List"/> FROM t_dec_template_title
+        GROUP BY moduleId=#{moduleId} WHERE deletedFlag=#{deletedFlag}
+    </select>-->
+</mapper>

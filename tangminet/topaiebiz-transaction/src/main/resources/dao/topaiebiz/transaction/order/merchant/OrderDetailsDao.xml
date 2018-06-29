@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.topaiebiz.trade.order.dao.OrderDetailDao">
+
+
+    <!-- 根据商品的skuIds 和 订单ID 查询订单详情集合 -->
+    <select id="orderDetailStaticsByPromotionId" resultType="com.topaiebiz.trade.dto.statics.PromotionStaticsDTO">
+        SELECT
+        t.promotionId,
+        count(t.memberId) AS memberCount,
+        SUM(t.totalPrice) AS orderTotalPrice,
+        SUM(t.discount) AS orderTotalDiscount,
+        SUM(t.goodsNum) AS goodsCount from
+        (SELECT memberId, promotionId, SUM(totalPrice) AS totalPrice, SUM(discount) AS discount, SUM(goodsNum) AS goodsNum from T_TSA_ORDER_DETAIL AS
+        tsod where 1 = 1 and tsod.orderState &gt; 0 and tsod.orderState &lt; 60 AND tsod.refundState &lt; 2
+        <if test="promotionIds != null">
+            AND tsod.promotionId in
+            <foreach item="item" index="index" collection="promotionIds" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        GROUP BY promotionId, memberId) AS t GROUP BY t.promotionId
+    </select>
+
+    <select id="getExpressInfoByOrderIds" resultType="com.topaiebiz.trade.order.dto.store.export.GoodExpressDTO">
+        SELECT
+        ttod.orderId AS orderId,
+        ttod.expressComName AS expressCompanyName,
+        ttod.expressNo AS expressNo
+        from t_tsa_order_detail AS ttod
+        where 1 = 1
+        <if test="orderIds != null">
+            AND ttod.orderId in
+            <foreach item="item" index="index" collection="orderIds" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        AND ttod.shipmentTime IS NOT NULL
+
+    </select>
+
+    <select id="countSkuHistoryVolume" resultType="integer">
+        SELECT SUM(`goodsNum`)
+          FROM `t_tsa_order_detail`
+         WHERE `memberId`= #{memberId}
+           AND `promotionId`= #{promotionId}
+           AND `skuId`= #{skuId}
+           AND `orderState`> #{cancelState}
+    </select>
+
+</mapper>

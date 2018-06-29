@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions
+        xmlns="http://schemas.xmlsoap.org/wsdl/"
+        xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+        targetNamespace="http://siebel.com/asi/BYM"
+        xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+        xmlns:tns="http://siebel.com/asi/BYM"
+><types
+></types
+><message
+ name="NewRedemptionOrder_Input"
+><part
+ name="InXml"
+ type="xsd:string"
+></part
+><part
+ name="Source"
+ type="xsd:string"
+></part
+></message
+><message
+ name="NewRedemptionOrder_Output"
+><part
+ name="ErrCode"
+ type="xsd:string"
+></part
+><part
+ name="ErrDesc"
+ type="xsd:string"
+></part
+><part
+ name="NeedPoints"
+ type="xsd:string"
+></part
+><part
+ name="OutXml"
+ type="xsd:string"
+></part
+><part
+ name="RedeemPointsBal"
+ type="xsd:string"
+></part
+></message
+><message
+ name="UpdateRedemptionOrder_Input"
+><part
+ name="InXml"
+ type="xsd:string"
+></part
+><part
+ name="Source"
+ type="xsd:string"
+></part
+></message
+><message
+ name="UpdateRedemptionOrder_Output"
+><part
+ name="ErrCode"
+ type="xsd:string"
+></part
+><part
+ name="ErrDesc"
+ type="xsd:string"
+></part
+><part
+ name="OutXml"
+ type="xsd:string"
+></part
+></message
+><message
+ name="RedemptionOrderCancel_Input"
+><part
+ name="InXml"
+ type="xsd:string"
+></part
+><part
+ name="Source"
+ type="xsd:string"
+></part
+></message
+><message
+ name="RedemptionOrderCancel_Output"
+><part
+ name="ErrCode"
+ type="xsd:string"
+></part
+><part
+ name="ErrDesc"
+ type="xsd:string"
+></part
+><part
+ name="OutXml"
+ type="xsd:string"
+></part
+></message
+><portType
+ name="NewRedemptionOrder"
+><operation
+ name="NewRedemptionOrder"
+><input
+ message="tns:NewRedemptionOrder_Input"
+></input
+><output
+ message="tns:NewRedemptionOrder_Output"
+></output
+></operation
+></portType
+><portType
+ name="UpdateRedemptionOrder"
+><operation
+ name="UpdateRedemptionOrder"
+><input
+ message="tns:UpdateRedemptionOrder_Input"
+></input
+><output
+ message="tns:UpdateRedemptionOrder_Output"
+></output
+></operation
+></portType
+><portType
+ name="RedemptionOrderCancel"
+><operation
+ name="RedemptionOrderCancel"
+><input
+ message="tns:RedemptionOrderCancel_Input"
+></input
+><output
+ message="tns:RedemptionOrderCancel_Output"
+></output
+></operation
+></portType
+><binding
+ name="NewRedemptionOrder"
+ type="tns:NewRedemptionOrder"
+><soap:binding
+ transport="http://schemas.xmlsoap.org/soap/http"
+ style="rpc"
+></soap:binding
+><operation
+ name="NewRedemptionOrder"
+><soap:operation
+ soapAction="rpc/http://siebel.com/asi/BYM:NewRedemptionOrder"
+></soap:operation
+><input
+><soap:body
+ namespace="http://siebel.com/asi/BYM"
+ use="literal"
+></soap:body
+></input
+><output
+><soap:body
+ namespace="http://siebel.com/asi/BYM"
+ use="literal"
+></soap:body
+></output
+></operation
+></binding
+><binding
+ name="UpdateRedemptionOrder"
+ type="tns:UpdateRedemptionOrder"
+><soap:binding
+ transport="http://schemas.xmlsoap.org/soap/http"
+ style="rpc"
+></soap:binding
+><operation
+ name="UpdateRedemptionOrder"
+><soap:operation
+ soapAction="rpc/http://siebel.com/asi/BYM:UpdateRedemptionOrder"
+></soap:operation
+><input
+><soap:body
+ namespace="http://siebel.com/asi/BYM"
+ use="literal"
+></soap:body
+></input
+><output
+><soap:body
+ namespace="http://siebel.com/asi/BYM"
+ use="literal"
+></soap:body
+></output
+></operation
+></binding
+><binding
+ name="RedemptionOrderCancel"
+ type="tns:RedemptionOrderCancel"
+><soap:binding
+ transport="http://schemas.xmlsoap.org/soap/http"
+ style="rpc"
+></soap:binding
+><operation
+ name="RedemptionOrderCancel"
+><soap:operation
+ soapAction="rpc/http://siebel.com/asi/BYM:RedemptionOrderCancel"
+></soap:operation
+><input
+><soap:body
+ namespace="http://siebel.com/asi/BYM"
+ use="literal"
+></soap:body
+></input
+><output
+><soap:body
+ namespace="http://siebel.com/asi/BYM"
+ use="literal"
+></soap:body
+></output
+></operation
+></binding
+><service
+ name="CRMRedemptionWS"
+><port
+ binding="tns:NewRedemptionOrder"
+ name="NewRedemptionOrder"
+><soap:address
+ location="http://115.236.166.212/eai_anon_chs/start.swe?SWEExtSource=AnonWebService&amp;SWEExtCmd=Execute"
+></soap:address
+></port
+><port
+ binding="tns:UpdateRedemptionOrder"
+ name="UpdateRedemptionOrder"
+><soap:address
+ location="http://115.236.166.212/eai_anon_chs/start.swe?SWEExtSource=AnonWebService&amp;SWEExtCmd=Execute"
+></soap:address
+></port
+><port
+ binding="tns:RedemptionOrderCancel"
+ name="RedemptionOrderCancel"
+><soap:address
+ location="http://115.236.166.212/eai_anon_chs/start.swe?SWEExtSource=AnonWebService&amp;SWEExtCmd=Execute"
+></soap:address
+></port
+></service
+></definitions
+>

@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Properties>
+        <Property name="logPath">D:/logs</Property>
+        <Property name="filePattern">%d{MM-dd-yyyy}.log.gz</Property>
+        <Property name="log4j-default-level">INFO</Property>
+    </Properties>
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <!-- 这里不要设置charset，指定编码后在IDE和cmd中会表现不一致，出现乱码 -->
+            <PatternLayout pattern="[%d] %p [%t] %c{3} - %msg%n"/>
+        </Console>
+        <RollingFile name="ROOT" fileName="${logPath}/motherbuy.log" filePattern="${logPath}/motherbuy-${filePattern}">
+            <PatternLayout charset="UTF-8" pattern="[%d] %p [%t] %c{3} ip:%X{ip} reqPath:%X{reqUri} - %msg%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+            </Policies>
+        </RollingFile>
+        <RollingFile name="goods" fileName="${logPath}/goods.log" filePattern="${logPath}/goods-${filePattern}">
+            <PatternLayout charset="UTF-8" pattern="[%d] %p [%t] %c{3} - %msg%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+            </Policies>
+        </RollingFile>
+        <RollingFile name="trade" fileName="${logPath}/trade.log" filePattern="${logPath}/trade-${filePattern}">
+            <PatternLayout charset="UTF-8" pattern="[%d] %p [%t] %c{3} - %msg%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+            </Policies>
+        </RollingFile>
+        <RollingFile name="member" fileName="${logPath}/member.log" filePattern="${logPath}/member-${filePattern}">
+            <PatternLayout charset="UTF-8" pattern="[%d] %p [%t] %c{3} - %msg%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+            </Policies>
+        </RollingFile>
+        <RollingFile name="merchant" fileName="${logPath}/merchant.log" filePattern="${logPath}/merchant-${filePattern}">
+            <PatternLayout charset="UTF-8" pattern="[%d] %p [%t] %c{3} - %msg%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+            </Policies>
+        </RollingFile>
+        <RollingFile name="promotion" fileName="${logPath}/promotion.log" filePattern="${logPath}/promotion-${filePattern}">
+            <PatternLayout charset="UTF-8" pattern="[%d] %p [%t] %c{3} - %msg%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+            </Policies>
+        </RollingFile>
+        <RollingFile name="giftcard" fileName="${logPath}/giftcard.log" filePattern="${logPath}/giftcard-${filePattern}">
+            <PatternLayout charset="UTF-8" pattern="[%d] %p [%t] %c{3} - %msg%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+            </Policies>
+        </RollingFile>
+        <RollingFile name="decorate" fileName="${logPath}/decorate.log" filePattern="${logPath}/decorate-${filePattern}">
+            <PatternLayout charset="UTF-8" pattern="[%d] %p [%t] %c{3} - %msg%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+            </Policies>
+        </RollingFile>
+        <RollingFile name="globalPerformance" fileName="${logPath}/performance.log" filePattern="${logPath}/performance.log-${filePattern}">
+            <PatternLayout charset="UTF-8" pattern="[%d] %p [%t] %c{3} - %msg%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+            </Policies>
+        </RollingFile>
+        <RollingFile name="monitor" fileName="${logPath}/monitor.log" filePattern="${logPath}/monitor-${filePattern}">
+            <PatternLayout charset="UTF-8" pattern="[%d] %p [%t] %c{3} - %msg%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+            </Policies>
+        </RollingFile>
+        <Monitor name="ErrorMonitorAppender" env="local">
+            <PatternLayout charset="UTF-8" pattern="[%d] %p [%t] %c{3} - %msg%n"/>
+            <LevelRangeFilter maxLevel="ERROR" minLevel="ERROR"/>
+            <!--<JsonLayout properties="true"/>-->
+        </Monitor>
+        <Async name="Async">
+            <AppenderRef ref="ErrorMonitorAppender"/>
+        </Async>
+    </Appenders>
+
+    <Loggers>
+        <Logger name="com.topaiebiz.goods" level="${log4j-default-level}">
+            <AppenderRef ref="goods"/>
+        </Logger>
+        <Logger name="com.topaiebiz.trade" level="${log4j-default-level}">
+            <AppenderRef ref="trade"/>
+        </Logger>
+        <Logger name="com.topaiebiz.payment" level="${log4j-default-level}">
+            <AppenderRef ref="trade"/>
+        </Logger>
+        <Logger name="com.topaiebiz.member" level="${log4j-default-level}">
+            <AppenderRef ref="member"/>
+        </Logger>
+        <Logger name="com.topaiebiz.merchant" level="${log4j-default-level}">
+            <AppenderRef ref="merchant"/>
+        </Logger>
+        <Logger name="com.topaiebiz.promotion" level="${log4j-default-level}">
+            <AppenderRef ref="promotion"/>
+        </Logger>
+        <Logger name="com.topaiebiz.giftcard" level="${log4j-default-level}">
+            <AppenderRef ref="giftcard"/>
+        </Logger>
+        <Logger name="com.topaiebiz.dec" level="${log4j-default-level}">
+            <AppenderRef ref="decorate"/>
+        </Logger>
+        <Logger name="com.topaiebiz.decorate" level="${log4j-default-level}">
+            <AppenderRef ref="decorate"/>
+        </Logger>
+        <Logger name="com.topaiebiz.monitor" level="${log4j-default-level}">
+            <AppenderRef ref="monitor"/>
+        </Logger>
+        <Logger name="com.nebulapaas" level="${log4j-default-level}"/>
+        <Logger name="org.springframework" level="${log4j-default-level}"/>
+        <Logger name="com.caucho" level="${log4j-default-level}"/>
+        <Logger name="com.mysql" level="${log4j-default-level}"/>
+        <Logger name="globalPerformance" level="WARN">
+            <AppenderRef ref="globalPerformance"/>
+        </Logger>
+        <!--<asyncLogger name="com" level="ERROR" includeLocation="true">-->
+            <!--<AppenderRef ref="ErrorMonitorAppender"/>-->
+        <!--</asyncLogger>-->
+        <Root level="${log4j-default-level}">
+            <AppenderRef ref="ROOT"/>
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="Async"/>
+        </Root>
+    </Loggers>
+</Configuration>

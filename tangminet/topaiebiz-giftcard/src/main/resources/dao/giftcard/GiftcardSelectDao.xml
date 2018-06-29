@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.topaiebiz.giftcard.dao.GiftcardSelectDao">
+    <select id="querySelect" resultType="com.topaiebiz.giftcard.vo.GiftcardSelectVO">
+        SELECT
+        tgs.id AS selectId,
+        tgs.seq AS  seq,
+        tgs.batchId AS batchId,
+        tgi.batchNo AS batchNo,
+        tgi.cardName AS cardName,
+        tgi.faceValue AS faceValue,
+        tgi.salePrice AS salePrice,
+        tgi.issueNum AS issueNum,
+        tgi.createdTime AS createdTime,
+        tgi.validDays AS validDays,
+        tgi.priority AS priority,
+        tgi.cardAttr AS cardAttr,
+        tgi.applyScope AS applyScope,
+        tgi.cover AS cover,
+        tgl.labelName AS labelName
+        FROM t_giftcard_select tgs
+        INNER  JOIN t_giftcard_batch tgi ON tgs.batchId=tgi.id
+        LEFT JOIN t_giftcard_label tgl ON tgl.id=tgi.labelId
+        WHERE tgs.delFlag=0 and tgi.issueStatus=3
+        <if test="batchNo != null">
+            AND tgi.batchNo = #{batchNo}
+        </if>
+        <if test="cardName != null">
+            AND tgi.cardName LIKE  concat("%",#{cardName},"%")
+        </if>
+        <if test="labelId != null">
+            AND tgi.labelId = #{labelId}
+        </if>
+        ORDER BY tgs.seq ASC
+    </select>
+
+    <select id="nextBySeq" resultType="com.topaiebiz.giftcard.entity.GiftcardSelect">
+        SELECT id,seq FROM t_giftcard_select WHERE delFlag=0 AND seq &gt; #{seq} ORDER BY seq asc limit 1
+    </select>
+    <select id="uponBySeq" resultType="com.topaiebiz.giftcard.entity.GiftcardSelect">
+        SELECT id,seq FROM t_giftcard_select WHERE delFlag=0 AND seq &lt; #{seq} ORDER BY seq desc limit 1
+    </select>
+</mapper>

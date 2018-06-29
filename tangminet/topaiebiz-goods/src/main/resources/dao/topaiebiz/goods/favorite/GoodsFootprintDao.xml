@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.topaiebiz.goods.favorite.dao.GoodsFootprintDao">
+
+    <!--根据会员id查询我的足迹-->
+    <select id="selectGoodsFootprintListByMemberId" resultType="com.topaiebiz.goods.favorite.dto.GoodsFootprintDto">
+        SELECT gf.id,gf.goodsId,gi.name,gi.defaultPrice,gi.marketPrice,gi.pictureName,gi.salesVolume,gf.createdTime FROM t_goo_goods_footprint gf
+        JOIN t_goo_item gi
+        ON gf.deletedFlag = 0
+        AND gf.memberId = #{memberId} WHERE gi.id = gf.goodsId
+        <if test="!(createdTimes==null or createdTimes=='')">
+            AND gf.createdTime =
+            STR_TO_DATE(#{createdTimes},'%Y-%m-%d
+            %H:%i:%s')
+        </if>
+        ORDER BY gf.createdTime DESC
+    </select>
+
+</mapper>

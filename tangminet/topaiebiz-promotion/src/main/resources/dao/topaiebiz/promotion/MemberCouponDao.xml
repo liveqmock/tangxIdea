@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.topaiebiz.promotion.mgmt.dao.MemberCouponDao">
+
+    <select id="countAvailByMemberIdAndCouponId" resultType="java.lang.Long">
+        SELECT couponId
+        FROM t_pro_member_coupon
+        WHERE deletedFlag = 0
+        AND usageState = 0
+        AND memberId = #{memberId}
+        AND couponId IN
+        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        GROUP BY couponId
+        HAVING COUNT(id)>0
+    </select>
+
+    <select id="selectCouponNum" resultType="java.lang.Integer">
+        SELECT COUNT(c.id)
+        FROM t_pro_promotion p LEFT JOIN t_pro_member_coupon c
+        ON p.id = c.couponId WHERE c.deletedFlag = 0 AND ((p.marketState in (2,4,6) AND p.endTime > NOW())
+        or (p.marketState =1 AND p.endTime > NOW() and typeId = 4 and subType in (0,1,2)))
+        AND c.usageState = 0
+        <if test="!(memberId==null or memberId=='')">
+            AND c.memberId = #{memberId}
+        </if>
+        <if test="!(storeId==null or storeId=='')">
+            AND c.storeId = #{storeId}
+        </if>
+    </select>
+
+</mapper>

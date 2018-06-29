@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>topaiebiz-parent</artifactId>
+        <groupId>com.topaiebiz</groupId>
+        <version>2.0.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.topaiebiz</groupId>
+    <artifactId>service-api</artifactId>
+    <packaging>pom</packaging>
+    <modules>
+        <module>goods-service-api</module>
+        <module>promotion-service-api</module>
+        <module>merchant-service-api</module>
+        <module>member-service-api</module>
+        <module>card-service-api</module>
+        <module>trade-service-api</module>
+        <module>basic-service-api</module>
+        <module>system-service-api</module>
+        <module>sms-service-api</module>
+        <module>payment-service-api</module>
+        <module>transport-service-api</module>
+        <module>decorate-service-api</module>
+        <module>openapi-service-api</module>
+        <module>file-service-api</module>
+        <module>settlement-service-api</module>
+        <module>monitor-service-api</module>
+        <module>elasticsearch-service-api</module>
+    </modules>
+    <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.topaiebiz</groupId>
+            <artifactId>topaiebiz-common</artifactId>
+        </dependency>
+    </dependencies>
+</project>

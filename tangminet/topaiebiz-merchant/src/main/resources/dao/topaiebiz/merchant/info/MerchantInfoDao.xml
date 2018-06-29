@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.topaiebiz.merchant.info.dao.MerchantInfoDao">
+
+    <!-- 联系人手机号进行重复验证 -->
+    <select id="selectMerchantInfoBycontactTele"
+            resultType="com.topaiebiz.merchant.info.entity.MerchantInfoEntity">
+		SELECT id,contactTele FROM t_mer_merchant_info WHERE
+		contactTele = #{contactTele}
+		AND deletedFlag =
+		0;
+	</select>
+
+    <!-- 删除商家信息(修改状态) -->
+    <delete id="deleteMerchantInfoById">
+		UPDATE t_mer_merchant_info SET state = 0
+		WHERE
+		id =
+		#{id}
+	</delete>
+
+    <!-- 商家信息分页检索 -->
+    <select id="selectMerchantInfoList" resultType="com.topaiebiz.merchant.info.dto.MerchantInfoListDto">
+		SELECT a.id, a.merchantType AS merchantType,a.contactName,a.name,c.address,c.contactTele,b.integralValue,
+		b.name AS gradeName,a.state,a.changeState,c.merchantId,a.storeName,a.createdTime,s.id AS storeId,a.gradeIntegral
+		FROM t_mer_merchant_info a
+		LEFT JOIN t_mer_merchant_grade b ON
+		a.merchantGradeId=b.id
+		LEFT JOIN t_mer_merchant_qualification c
+		ON a.id=c.merchantId
+		LEFT JOIN t_mer_store_info s ON s.merchantId=a.id
+		where a.state=9
+		<if test="!(storeId==null or storeId=='')">
+			AND s.id = #{storeId}
+		</if>
+		<if test="!(changeState==null or changeState=='')">
+			AND a.changeState = #{changeState}
+		</if>
+
+		<if test="!(contactTele==null or contactTele=='')">
+			AND c.contactTele = #{contactTele}
+		</if>
+
+        <if test="!(gradeName==null or gradeName=='')">
+            AND b.name = #{gradeName}
+        </if>
+		/*店铺名称*/
+		<if test="!(storeName==null or storeName == '')">
+			AND a.storeName like CONCAT('%', #{storeName}, '%')
+		</if>
+		/*公司名称*/
+		<if test="!(name==null or name == '')">
+			AND a.name like CONCAT('%', #{name}, '%')
+		</if>
+        ORDER BY c.createdTime DESC
+    </select>
+
+    <!-- 查看商家详情(根据Id查看商家详情数据回显) -->
+    <select id="selectMerchantParticularsById" resultType="com.topaiebiz.merchant.info.dto.MerchantInfoDto">
+		SELECT
+		a.`id`,
+		b.`name`,b.`districtId`,b.`address`,b.`telephone`,
+		b.`staffNo`,b.`capital`,b.`contactTele`,b.`idCard`,b.`email`,b.`idCardImage`,
+		b.`licenseNo`,b.`licenseImage`,b.`licenseLocation`,b.`licenseBegin`,b.`licenseEnd`,b.licenseRegionId,
+		b.`manageScope`,b.`organCode`,b.`taxpayerNo`,b.`taxpayerImage`,b.`paymentPrice`,b.`payImage`,
+		d.`accountName`,d.`account`,d.accountDistrictId,d.`bankNum`,d.`bankName`,
+		d.`electronicImage`,b.`storeNumber`,a.`merchantType`,a.imgages,a.storeName,a.settleCycle,b.establishTime,b.contactName,b.memo,b.payTime
+		FROM t_mer_merchant_info a INNER JOIN t_mer_merchant_qualification b
+		ON a.`id`=b.`merchantId` INNER JOIN t_mer_merchant_account d ON
+		a.`id`=d.`merchantId`
+		WHERE a.`id` =#{id} and d.deletedFlag=0
+	</select>
+
+    <!-- 查看门店详情(根据Id查看门店数据回显) -->
+    <select id="selectStoreInfoById" resultType="com.topaiebiz.merchant.info.dto.MerchantInfoDto">
+		SELECT s.`id`,
+		s.`merchantId`,
+		s.`name`,s.`districtId`,s.`storeTele`,s.`contactName`,s.`contactTele`,s.`images`,s.`description`
+		FROM
+		t_mer_store_info s INNER JOIN t_mer_merchant_info i ON
+		s.`merchantId` = i.`id`
+		WHERE
+		s.`merchantId`= #{merchantId}
+	</select>
+
+    <!-- 商户类型下拉框展示 -->
+    <select id="selectMerchantType" resultType="com.topaiebiz.merchant.info.dto.MerchantInfoDto">
+		SELECT
+		id,merchantType FROM t_mer_merchant_info WHERE
+		deletedFlag
+		= 0
+	</select>
+
+    <!-- 获取店铺id和name -->
+    <select id="selectStoreInfoByName" resultType="com.topaiebiz.merchant.enter.dto.StoreInfoDto">
+        SELECT
+        id,merchantId,name,merchantGradeId,contactTele FROM
+        t_mer_store_info WHERE
+        deletedFlag
+        = 0
+        <if test="!(id==null or id=='')">
+            AND id = #{id}
+        </if>
+        <if test="!(name==null or name=='')">
+            AND name = #{name}
+        </if>
+    </select>
+
+    <!-- 商家等级设置 -->
+    <update id="updateMerchantInfoByMerchantGradeId">
+		UPDATE t_mer_merchant_info SET merchantGradeId =
+		#{merchantGradeId}
+		WHERE
+		id =
+		#{merchantId}
+		AND
+		deletedFlag = 0
+	</update>
+
+    <!-- 商户类型下拉框展示 -->
+    <select id="selectMerchantInfoByMerchantType" resultType="com.topaiebiz.merchant.info.dto.MerchantInfoDto">
+		SELECT
+		id,merchantType FROM t_mer_merchant_info WHERE deletedFlag = 0
+	</select>
+
+    <!-- 所属商家 -->
+    <select id="selectMerchantInfoByName" resultType="com.topaiebiz.merchant.info.dto.MerchantInfoDto">
+        SELECT
+        id,name
+        FROM t_mer_merchant_info WHERE deletedFlag = 0
+        <if test="!(name==null or name == '')">
+            AND name like CONCAT('%', #{name}, '%')
+        </if>
+    </select>
+
+    <select id="selectByStoreId" parameterType="java.lang.Long"
+            resultType="com.topaiebiz.merchant.info.entity.StoreInfoEntity">
+		SELECT id FROM t_mer_store_info WHERE id=#{storeId} AND
+		deletedFlag = 0
+	</select>
+
+    <!-- 获取店铺名称 -->
+    <select id="selectStoreInfoList" resultType="com.topaiebiz.merchant.enter.dto.StoreInfoDto">
+		SELECT id,name FROM
+		t_mer_store_info WHERE deletedFlag=0
+		<if test="!(name==null or name == '')">
+			AND name like CONCAT('%', #{name}, '%')
+		</if>
+	</select>
+
+</mapper>

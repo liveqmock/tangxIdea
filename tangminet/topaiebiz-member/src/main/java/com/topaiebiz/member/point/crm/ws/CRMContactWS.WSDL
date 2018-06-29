@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://siebel.com/asi/BYM"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" targetNamespace="http://siebel.com/asi/BYM"
+             xsi:schemaLocation="http://schemas.xmlsoap.org/wsdl/soap/ http://schemas.xmlsoap.org/wsdl/soap/ ">
+    <types/>
+    <message name="ContactUpsert_Input">
+        <part name="InXml" type="xsd:string"/>
+        <part name="Source" type="xsd:string"/>
+    </message>
+    <message name="ContactUpsert_Output">
+        <part name="BabyId" type="xsd:string"/>
+        <part name="ContactId" type="xsd:string"/>
+        <part name="ErrCode" type="xsd:string"/>
+        <part name="ErrDesc" type="xsd:string"/>
+        <part name="HouseId" type="xsd:string"/>
+    </message>
+    <message name="ContactQuery_Input">
+        <part name="PageSize" type="xsd:string"/>
+        <part name="SortSpec" type="xsd:string"/>
+        <part name="ViewMode" type="xsd:string"/>
+        <part name="Source" type="xsd:string"/>
+        <part name="StartRowNum" type="xsd:string"/>
+        <part name="SearchExpr" type="xsd:string"/>
+    </message>
+    <message name="ContactQuery_Output">
+        <part name="ErrCode" type="xsd:string"/>
+        <part name="ErrDesc" type="xsd:string"/>
+        <part name="LastPage" type="xsd:string"/>
+        <part name="OutXml" type="xsd:string"/>
+    </message>
+    <portType name="ContactUpsert">
+        <operation name="ContactUpsert">
+            <input message="tns:ContactUpsert_Input"/>
+            <output message="tns:ContactUpsert_Output"/>
+        </operation>
+    </portType>
+    <portType name="ContactQuery">
+        <operation name="ContactQuery">
+            <input message="tns:ContactQuery_Input"/>
+            <output message="tns:ContactQuery_Output"/>
+        </operation>
+    </portType>
+    <binding name="ContactUpsert" type="tns:ContactUpsert">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="rpc"/>
+        <operation name="ContactUpsert">
+            <soap:operation soapAction="rpc/http://siebel.com/asi/BYM:ContactUpsert"/>
+            <input>
+                <soap:body namespace="http://siebel.com/asi/BYM" use="literal"/>
+            </input>
+            <output>
+                <soap:body namespace="http://siebel.com/asi/BYM" use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <binding name="ContactQuery" type="tns:ContactQuery">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="rpc"/>
+        <operation name="ContactQuery">
+            <soap:operation soapAction="rpc/http://siebel.com/asi/BYM:ContactQuery"/>
+            <input>
+                <soap:body namespace="http://siebel.com/asi/BYM" use="literal"/>
+            </input>
+            <output>
+                <soap:body namespace="http://siebel.com/asi/BYM" use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="CRMContactWS">
+        <port binding="tns:ContactUpsert" name="ContactUpsert">
+            <soap:address
+                    location="http://115.236.166.212/eai_anon_chs/start.swe?SWEExtSource=AnonWebService&amp;SWEExtCmd=Execute"/>
+        </port>
+        <port binding="tns:ContactQuery" name="ContactQuery">
+            <soap:address
+                    location="http://115.236.166.212/eai_anon_chs/start.swe?SWEExtSource=AnonWebService&amp;SWEExtCmd=Execute"/>
+        </port>
+    </service>
+</definitions>

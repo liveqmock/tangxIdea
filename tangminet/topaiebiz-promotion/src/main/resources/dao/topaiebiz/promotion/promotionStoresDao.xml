@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.topaiebiz.promotion.mgmt.dao.PromotionStoresDao">
+
+    <select id="slectPromotionStoresList" resultType="com.topaiebiz.promotion.mgmt.dto.coupon.CouponStoreDto">
+        SELECT
+        storeId,name,merchantName,entryTime,isReleaseData
+        FROM
+        t_pro_promotion_stores
+        WHERE deletedFlag = 0
+        <if test="!(promotionId==null or promotionId=='')">
+            AND promotionId = #{promotionId}
+        </if>
+        <if test="!(storeId==null or storeId=='')">
+            AND storeId = #{storeId}
+        </if>
+        <if test="!(name==null or name=='')">
+            AND name like CONCAT('%', #{name}, '%')
+        </if>
+        <if test="!(merchantName==null or name=='')">
+            AND merchantName like CONCAT('%', #{merchantName}, '%')
+        </if>
+        <if test="!(storeId==null or name=='')">
+            AND storeId like CONCAT('%', #{storeId}, '%')
+        </if>
+        ORDER BY createdTime
+    </select>
+
+</mapper>

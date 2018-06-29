@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.topaiebiz.goods.dao.AttrItemDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.topaiebiz.goods.entity.AttrItem">
+        <id column="id" property="id" />
+        <result column="categoryId" property="categoryId" />
+        <result column="groupId" property="groupId" />
+        <result column="attrName" property="attrName" />
+        <result column="valueType" property="valueType" />
+        <result column="defaultUnit" property="defaultUnit" />
+        <result column="isSale" property="isSale" />
+        <result column="isMust" property="isMust" />
+        <result column="isCustom" property="isCustom" />
+        <result column="isFilter" property="isFilter" />
+        <result column="sortNo" property="sortNo" />
+        <result column="description" property="description" />
+        <result column="attrType" property="attrType" />
+        <result column="creatorId" property="creatorId" />
+        <result column="createdTime" property="createdTime" />
+        <result column="lastModifierId" property="lastModifierId" />
+        <result column="lastModifiedTime" property="lastModifiedTime" />
+        <result column="deletedFlag" property="deletedFlag" />
+        <result column="version" property="version" />
+    </resultMap>
+    <select id="queryAttrItemFormal" resultType="com.topaiebiz.goods.entity.AttrItem">
+        SELECT id,categoryId,groupId,attrName,valueType,isSale,isMust,isCustom,isFilter,sortNo,description
+        FROM t_goo_attr_item
+        WHERE  deletedFlag=0
+        AND categoryId=#{categoryId}
+        <if test="groupId != null">
+            AND groupId = #{groupId}
+        </if>
+        ORDER BY sortNo ASC
+    </select>
+    <insert id="replaceEntity" parameterType="com.topaiebiz.goods.entity.AttrItem">
+        REPLACE INTO t_goo_attr_item( `id`, `categoryId`, `groupId`, `attrName`, `valueType`, `defaultUnit`, `isSale`, `isMust`, `isCustom`, `isFilter`, `sortNo`, `description`, `attrType`,  `creatorId`, `createdTime`, `lastModifierId`, `lastModifiedTime`, `deletedFlag`, `version`)
+        values (#{id},#{categoryId},#{groupId},#{attrName},#{valueType},#{defaultUnit},#{isSale},#{isMust},#{isCustom},#{isFilter},#{sortNo},#{description},#{attrType},#{creatorId},#{createdTime},#{lastModifierId},#{lastModifiedTime},#{deletedFlag},#{version})
+    </insert>
+</mapper>

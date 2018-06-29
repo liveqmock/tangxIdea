@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.topaiebiz.merchant.store.dao.MerchantFollowDao">
+
+    <!-- 创建店铺后显示店铺的信息 -->
+    <select id="selectMerchantFollowList" resultType="com.topaiebiz.merchant.store.dto.MerchantFollowDto">
+			SELECT   s.name,s.merchantId,s.merchantGradeId,s.changeState
+            FROM  t_mem_merchant_follow f
+	        LEFT JOIN t_mer_store_info s ON
+           f.memberId=s.id AND f.deletedFlag=0
+	</select>
+
+
+    <select id="selectMerchantFollowLists" resultType="com.topaiebiz.merchant.store.dto.MerchantFollowDto">
+        SELECT i.name AS storeName,i.images,f.id,f.memberId,f.deletedFlag,f.storeId,i.changeState from t_mer_store_info i JOIN t_mem_merchant_follow f ON
+ i.id = f.storeId where f.memberId =#{memberId} AND f.deletedFlag = 0
+    </select>
+    <!--根据店铺id查询店铺信息-->
+    <select id="selectMerchantFollowDetails" resultType="com.topaiebiz.merchant.store.dto.MerchantFollowDto">
+       SELECT `name` AS storeName,images,id AS storeId,changeState from t_mer_store_info where id=#{storeId} AND deletedFlag=0
+    </select>
+
+    <!--查询关注信息-->
+    <select id="selectFollowByMemberId" resultType="com.topaiebiz.merchant.store.entity.MerchantFollowEntity">
+        SELECT * FROM  t_mem_merchant_follow
+        WHERE memberId=#{memberId} AND storeId=#{storeId} and deletedFlag=0
+    </select>
+
+    <!--取消关注-->
+    <update id="updateMerchantFollowById">
+         UPDATE t_mem_merchant_follow SET deletedFlag =
+        1
+        WHERE
+        memberId =
+        #{memberId}
+        AND
+        storeId=#{storeId}
+    </update>
+
+</mapper>

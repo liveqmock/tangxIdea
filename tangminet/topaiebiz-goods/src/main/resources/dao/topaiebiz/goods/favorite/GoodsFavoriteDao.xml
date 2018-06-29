@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.topaiebiz.goods.favorite.dao.GoodsFavoriteDao">
+
+    <!--根据会员id查询收藏夹列表-->
+    <select id="selectGoodsFavoriteListByMemberId" resultType="com.topaiebiz.goods.favorite.dto.GoodsFavoriteDto">
+        SELECT gf.id,gf.goodsId,gi.name,gi.defaultPrice,gi.marketPrice,
+        gi.pictureName,gi.salesVolume
+        FROM t_goo_goods_favorite gf JOIN t_goo_item gi ON
+        gf.deletedFlag = 0 AND gf.memberId = #{memberId} WHERE  gi.id = gf.goodsId
+        ORDER BY gf.createdTime DESC
+    </select>
+
+</mapper>

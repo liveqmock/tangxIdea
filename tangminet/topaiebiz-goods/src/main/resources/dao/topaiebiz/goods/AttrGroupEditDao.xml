@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.topaiebiz.goods.dao.AttrGroupEditDao">
+
+    <!-- 添加根据属性名称查询属性是否有重复-->
+    <select id="selectAddAttrGroupEditName" resultType="com.topaiebiz.goods.entity.AttrGroupEdit">
+        select id from t_goo_attr_group_edit
+        WHERE id not IN (SELECT id FROM t_goo_attr_group_edit WHERE deletedFlag=1)
+        AND categoryId=#{categoryId} AND name = #{name}
+    </select>
+    <!-- 修改根据属性名称查询属性是否有重复-->
+    <select id="selectUpdateAttrGroupEditName" resultType="com.topaiebiz.goods.entity.AttrGroupEdit">
+         select id from t_goo_attr_group_edit
+        WHERE id not IN (SELECT id FROM t_goo_attr_group_edit WHERE deletedFlag=1)
+        AND categoryId=#{categoryId} AND name = #{name} AND id !=#{id}
+    </select>
+
+</mapper>

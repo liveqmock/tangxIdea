@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.topaiebiz.merchant.info.dao.MerchantReturnDao">
+
+    <!--根据商家id查询信息-->
+    <select id="selectMerchantReturnInfoByMerchantId" resultType="com.topaiebiz.merchant.info.entity.MerchantReturnEntity">
+            SELECT   id,merchantId,contactNumber,consignee,contactAddress,districtId,version
+            FROM   t_mer_store_return   WHERE merchantId=#{merchantId}
+    </select>
+
+
+</mapper>
